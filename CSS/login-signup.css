@@ -1,0 +1,103 @@
+.lol {
+    color: white;
+    text-align: center;
+}
+
+.header {
+    font-family: 'Press Start 2P', cursive;
+}
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.45);
+    color: rgba(0, 0, 0, 0.45);
+}
+
+#user, #password, #name, #lname, #email {
+    color: white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+label {
+    color: white;
+}
+
+button {
+    background-color: rgba(0, 0, 0, 0.53);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.cancelbtn {
+    width: auto;
+    background-color: rgba(0, 0, 0, 0.53);
+}
+
+.container {
+    padding: 16px;
+    width: 25%;
+    align-content: center;
+}
+
+#cancel {
+    background-color: rgba(0, 0, 0, 0.53);
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+@media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+
+    .cancelbtn {
+        width: 100%;
+    }
+}
+
+.psw {
+    background-color: rgba(0, 0, 0, 0.53);
+}
+
+.login {
+    text-align: center;
+    border-radius: 20%;
+    width: 5%;
+}
+
+.login:hover {
+    width: 10%;
+    alignment: right;
+}
+
+#map {
+    background-color: rgba(0, 0, 0, 0.53);
+}
+
+#information {
+    width: 50%;
+    margin: 0 auto;
+}
