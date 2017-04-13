@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<link>
+<html lang="en">
 <head>
     <!-- jQuery Core -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -22,35 +21,13 @@
             crossorigin="anonymous"></script>
     <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
-    <link rel="stylesheet" href="../static/login-signup.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='login-signup.css') }}">
+
+    <script src="{{ url_for('static', filename='canvas.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='pong.css') }}">
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
-    <title>Index</title>
+    <title>Pong Game</title>
 </head>
-
 <body background="../static/background.gif">
-
-<header>
-    <div class="lol">
-        <h1 class="header">Welcome</h1>
-    </div>
-
-</header>
-<div class='container-fluid'>
-
-    <img class="img-responsive" align="center" src="../static/spaceship.png">
-
-    <div class="col-lg-12">
-        <div class="col-md-6">
-            <button class="btn btn-primary">Solo</button>
-        </div>
-
-        <div class="col-md-6">
-            <button class="btn btn-primary">Multiplayer</button>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>
