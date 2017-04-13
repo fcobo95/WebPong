@@ -5,3 +5,22 @@ canvas {
     margin-right: 10%;
     border: 2px solid white;
 }
+
+#game-container {
+
+}
+
+button {
+    background-color: rgba(0, 0, 0, 0.53);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+#iniciar {
+    margin-left: 50%;
+
+}

@@ -18,7 +18,7 @@ canvas.borderColor= 'white';
 var context = canvas.getContext('2d');
 
 window.onload = function () {
-    document.body.appendChild(canvas);
+    document.getElementById('game-container').appendChild(canvas);
     animate(step);
 };
 
