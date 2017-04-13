@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<link>
+<head>
+    <!-- jQuery Core -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- jQueryUI -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Bootstrap CSS and JS -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
+    Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
+
+    <link href="../CSS/login-signup.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <title>Login Page</title>
+</head>
+
+<body background="../static/login-background.gif">
+<header>
+    <div class="lol">
+        <h1 class="header">Login</h1>
+    </div>
+</header>
+<form id="login" method="post" name="login">
+
+    <div class="container">
+
+        <label><b>Username</b></label>
+        <input type="text" id="user" placeholder="Enter Username" name="username" required>
+
+        <label><b>Password</b></label>
+        <input type="password" id="password" placeholder="Enter Password" name="password" required>
+
+        <button id="submit_button" type="button" onclick="login_function()">Login</button>
+
+        <button type="button" id="signup" onclick="window.location.href = 'signup.html';">Signup</button>
+        <br>
+
+    </div>
+</form>
+</body>
+</html>
