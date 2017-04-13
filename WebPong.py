@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from flask_socketio import SocketIO, join_room, leave_room
 import datetime
 import base64
 
@@ -12,6 +13,7 @@ import base64
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'JE9395ccce'
 auth = HTTPBasicAuth()
+socketio = SocketIO(app)
 
 # ESTA FUNCION CORRE UNA VEZ AL INICIAR EL SERVIDOR, EN DONDE CREA LA CONEXION CON LA BASE
 # DE DATOS LOCAL.
@@ -126,6 +128,25 @@ def obtengaToken():
     except Exception as e:
         return formateeElError(e)
 
+@socketio.on('message')
+def handle_message(message):
+    print('received message: ' + message)
+    socketio.send('Got ya!')
+
+@socketio.on('join')
+def on_join(data):
+    username = definaElUsuario()
+    room = data['room']
+    join_room(room)
+    socketio.send(username + ' has joined the room.', room=room)
+
+@socketio.on('leave')
+def on_leave(data):
+    username = definaElUsuario()
+    room = data['room']
+    leave_room(room)
+    socketio.send(username + ' has left the room.', room=room)
+
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
 # SE OBTIENE DE AHI; SINO SE REVISA LOS CREDENCIALES DEL HEADER, SE DECODIFICAN, Y SE OBTIENE EL
@@ -195,4 +216,5 @@ def verifiqueToken(token):
 
 # AQUI SE INICIALIZA EL PROGRAMA
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    # app.run(debug=True, port=5000, host="0.0.0.0")
+    socketio.run(app)
