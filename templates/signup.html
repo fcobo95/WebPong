@@ -23,7 +23,7 @@
     <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
 
-
+    <script src="../JavaScript/signup-function.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='login-signup.css') }}">
     <link rel="stylesheet" href="../static/login-signup.css">
     <meta charset="UTF-8">
@@ -56,9 +56,9 @@
         <label><b>Password</b></label>
         <input type="password" id="password" placeholder="Enter Password" name="Contrasena" required>
 
-        <button id="submit_button" type="button">Submit</button>
+        <button id="submit_button" type="button" onclick="signup_function()">Submit</button>
 
-        <button type="button" id="cancel" onclick="location.href='login.html';">Cancel</button>
+        <button type="button" id="cancel" onclick="location.href='/login';">Cancel</button>
 
     </div>
 </form>
