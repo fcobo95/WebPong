@@ -1,5 +1,5 @@
 # SECCION PARA IMPORTAR MODULOS NECESARIOS
-from flask import Flask, render_template, request, json, Response, jsonify
+from flask import Flask, render_template, request, json, Response, jsonify, redirect
 from pymongo import MongoClient
 from bson import ObjectId
 from flask_httpauth import HTTPBasicAuth
@@ -43,7 +43,27 @@ def verifiqueContrasena(usuario_o_token, password):
 
 @app.route('/')
 def hello_world():
+    return redirect('/login', 302)
+
+
+@app.route('/login')
+def login():
     return render_template('login.html')
+
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/game')
+def game():
+    return render_template('Pong.html')
 
 
 # ESTA FUNCION RECIBE UN FORM, EL CUAL PARSEA PARA OBTENER TODOS LOS DATOS INDIVIDUALES. REVISA
