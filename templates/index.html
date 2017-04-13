@@ -39,6 +39,14 @@
             socket.emit('message', {message: 'Hello!', room: 'A'})
         }
 
+        socket.on('join', function (message) {
+            if (message == 'error') {
+                alert("Esta sala se encuentra llena. Por favor elija otra.")
+            } else {
+                window.location.href = '/game'
+            }
+        });
+
         socket.on('message', function (message) {
             console.log("Message: " + message);
         });

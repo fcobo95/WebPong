@@ -44,7 +44,7 @@ def verifiqueContrasena(usuario_o_token, password):
 
 
 @app.route('/')
-def hello_world():
+def redirect():
     return redirect('/login', 302)
 
 
@@ -136,11 +136,23 @@ def connected():
 
 @socketio.on('join')
 def on_join(data):
-    username = definaElUsuario()
-    room = data['room']
-    join_room(room)
-    print(username + " joined.")
-    socketio.emit('message', username + ' has joined the room.', room=room)
+    elUsuario = definaElUsuario()
+    laSala = data['room']
+    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
+    if laBusqueda is None:
+        localDatabase.Salas.insert_one({'_id': laSala, 'UsuarioA': elUsuario, 'UsuarioB': ''})
+        join_room(laSala)
+        print(elUsuario + " joined.")
+        socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
+    else:
+        if laBusqueda['UsuarioB'] == '':
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': elUsuario}})
+            join_room(laSala)
+            print(elUsuario + " joined.")
+            socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
+        else:
+            print("Room full.")
+            socketio.emit('join', 'error')
 
 
 @socketio.on('message')
@@ -151,10 +163,18 @@ def handle_message(message):
 
 @socketio.on('leave')
 def on_leave(data):
-    username = definaElUsuario()
-    room = data['room']
-    leave_room(room)
-    socketio.send(username + ' has left the room.', room=room)
+    elUsuario = definaElUsuario()
+    laSala = data['room']
+    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
+    if laBusqueda['UsuarioA'] == elUsuario:
+        elOtroUsuario = laBusqueda['UsuarioB']
+        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioA': elOtroUsuario}})
+        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+    elif laBusqueda['UsuarioB'] == elUsuario:
+        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+    leave_room(laSala)
+    print(elUsuario + " has left the room.")
+    socketio.send(elUsuario + ' has left the room.', room=laSala)
 
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
