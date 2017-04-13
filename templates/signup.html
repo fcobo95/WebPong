@@ -23,13 +23,15 @@
     <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
 
-    <link href="../CSS/login-signup.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='login-signup.css') }}">
+    <link rel="stylesheet" href="../static/login-signup.css">
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <title>Signup Page</title>
 </head>
 
-<body background="../static/login-background.gif">
+<body background="../static/background.gif">
 <header>
     <div class="lol">
         <h1 class="header">Signup</h1>

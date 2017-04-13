@@ -5,6 +5,7 @@ from bson import ObjectId
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 import datetime
+import base64
 
 # SE CREA LA APLICACION DE FLASK, SE DEFINE LA LLAVE SECRETA PARA LA CREACION DE TOKENS,
 # SE INICIALIZA LA AUTENTICACION BASICA.
@@ -42,7 +43,7 @@ def verifiqueContrasena(usuario_o_token, password):
 
 @app.route('/')
 def hello_world():
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 # ESTA FUNCION RECIBE UN FORM, EL CUAL PARSEA PARA OBTENER TODOS LOS DATOS INDIVIDUALES. REVISA
