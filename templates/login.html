@@ -35,21 +35,19 @@
         <h1 class="header">Login</h1>
     </div>
 </header>
-<form id="login" method="post" name="login">
+<form id="login" method="post" name="login" autocomplete="off">
 
     <div class="container">
-
         <label><b>Username</b></label>
         <input type="text" id="user" placeholder="Enter Username" name="username" required>
 
         <label><b>Password</b></label>
         <input type="password" id="password" placeholder="Enter Password" name="password" required>
 
-        <button id="submit_button" type="button" onclick="login_function()">Login</button>
+        <button id="submit_button" type="button">Login</button>
 
         <button type="button" id="signup" onclick="window.location.href = 'signup.html';">Signup</button>
         <br>
-
     </div>
 </form>
 </body>
