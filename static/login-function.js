@@ -14,33 +14,26 @@ function login_function() {
 
     var username = $("#user").val();
     var password = $("#password").val();
-    var ip = "192.168.1.27";
-    var local = "127.0.0.1";
-    var port = "5000";
     if (username === "" || password === "") {
         alert("Error: Ingrese su usuario y contraseña.")
     } else {
-        var settings = {
+        $.ajax({
             "async": true,
-            "crossDomain": true,
-            "url": "http://" + local + port + "/api/login",
+            "url": "/api/login",
             "method": "GET",
             "headers": {
                 "authorization": "Basic " + btoa(username + ":" + password)
             },
             success: function (response) {
-                console.log(response);
+                console.log(response)
                 alert("Welcome, " + username + "!");
                 sessionStorage.setItem("Token", response['Token'])
                 window.location.href = "/index";
             },
             error: function (response) {
-                console.log(response);
-                alert("Error: " + response['responseText'])
+                console.log(response)
+                alert("Error: " + response['statusText'])
             }
-        };
-        $.ajax(settings).done(function (response) {
-            console.log(response);
         });
     }
 }

@@ -21,14 +21,10 @@ function signup_function() {
     var email = $("#email").val();
     var user = $("#user").val();
     var password = $("#password").val();
-    var ip = "192.168.1.27";
-    var local = "127.0.0.1";
-    var port = "5000";
     if (name && lastName && email && user && password) {
         var formData = $("#signup").serialize();
         $.ajax({
             "async": true,
-            "crossDomain": true,
             "url": "/api/create-user",
             "method": "POST",
             "dataType": "json",
