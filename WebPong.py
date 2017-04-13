@@ -128,14 +128,10 @@ def obtengaToken():
     except Exception as e:
         return formateeElError(e)
 
-@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)
-    socketio.send('Got ya!')
 
 @socketio.on('connect')
 def connected():
-    print('pelos conectados.')
+    print('Connected.')
 
 
 @socketio.on('join')
@@ -143,7 +139,15 @@ def on_join(data):
     username = definaElUsuario()
     room = data['room']
     join_room(room)
-    socketio.send(username + ' has joined the room.', room=room)
+    print(username + " joined.")
+    socketio.emit('message', username + ' has joined the room.', room=room)
+
+
+@socketio.on('message')
+def handle_message(message):
+    print('received message: ' + message['message'])
+    socketio.emit('message', message['message'], room=message['room'])
+
 
 @socketio.on('leave')
 def on_leave(data):
@@ -152,10 +156,6 @@ def on_leave(data):
     leave_room(room)
     socketio.send(username + ' has left the room.', room=room)
 
-@socketio.on('player move')
-def move(mensaje):
-    print('Sirve: ' + str(mensaje))
-    socketio.emit('updatePlayer', mensaje)
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
 # SE OBTIENE DE AHI; SINO SE REVISA LOS CREDENCIALES DEL HEADER, SE DECODIFICAN, Y SE OBTIENE EL
@@ -226,4 +226,4 @@ def verifiqueToken(token):
 # AQUI SE INICIALIZA EL PROGRAMA
 if __name__ == '__main__':
     # app.run(debug=True, port=5000, host="0.0.0.0")
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0", port=5000)
