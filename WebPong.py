@@ -133,6 +133,11 @@ def handle_message(message):
     print('received message: ' + message)
     socketio.send('Got ya!')
 
+@socketio.on('connect')
+def connected():
+    print('pelos conectados.')
+
+
 @socketio.on('join')
 def on_join(data):
     username = definaElUsuario()
@@ -147,6 +152,10 @@ def on_leave(data):
     leave_room(room)
     socketio.send(username + ' has left the room.', room=room)
 
+@socketio.on('player move')
+def move(mensaje):
+    print('Sirve: ' + str(mensaje))
+    socketio.emit('updatePlayer', mensaje)
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
 # SE OBTIENE DE AHI; SINO SE REVISA LOS CREDENCIALES DEL HEADER, SE DECODIFICAN, Y SE OBTIENE EL
