@@ -186,8 +186,11 @@ def on_leave(data):
     laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
     if laBusqueda['UsuarioA'] == elUsuario:
         elOtroUsuario = laBusqueda['UsuarioB']
-        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioA': elOtroUsuario}})
-        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+        if elOtroUsuario != "":
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioA': elOtroUsuario}})
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+        else:
+            localDatabase.Salas.remove({'_id': laSala})
     elif laBusqueda['UsuarioB'] == elUsuario:
         localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
     leave_room(laSala)
