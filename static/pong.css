@@ -24,3 +24,11 @@ button {
     margin-left: 50%;
 
 }
+
+#chat-box{
+    height:100px;
+    width:920px;
+    border:1px solid #ccc;
+    font:16px/26px Georgia, Garamond, Serif;
+    overflow:auto;
+}

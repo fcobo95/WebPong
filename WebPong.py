@@ -44,7 +44,7 @@ def verifiqueContrasena(usuario_o_token, password):
 
 
 @app.route('/')
-def redirect():
+def redirection():
     return redirect('/login', 302)
 
 
@@ -58,11 +58,13 @@ def signup():
     return render_template('signup.html')
 
 
+# TODO: AGREGAR AUTENTICACION
 @app.route('/index')
 def index():
     return render_template('index.html')
 
 
+# TODO: AGREGAR AUTENTICACION
 @app.route('/game')
 def game():
     return render_template('Pong.html')
@@ -129,15 +131,29 @@ def obtengaToken():
         return formateeElError(e)
 
 
+@app.route('/api/check-room', methods=['POST'])
+def checkRoom():
+    laInformacion = request.json
+    laSala = laInformacion['room']
+    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
+    if laBusqueda is None:
+        return 'True'
+    else:
+        if laBusqueda['UsuarioB'] == '':
+            return 'True'
+        else:
+            return 'False'
+
+
 @socketio.on('connect')
 def connected():
     print('Connected.')
 
 
 @socketio.on('join')
-def on_join(data):
+def on_join(message):
     elUsuario = definaElUsuario()
-    laSala = data['room']
+    laSala = message['room']
     laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
     if laBusqueda is None:
         localDatabase.Salas.insert_one({'_id': laSala, 'UsuarioA': elUsuario, 'UsuarioB': ''})
@@ -157,10 +173,12 @@ def on_join(data):
 
 @socketio.on('message')
 def handle_message(message):
-    print('received message: ' + message['message'])
-    socketio.emit('message', message['message'], room=message['room'])
+    elMensaje = message['message']
+    laSala = message['room']
+    print('Mensaje: ' + elMensaje + " Sala: " + laSala)
+    socketio.emit('message', elMensaje, room=laSala)
 
-
+# TODO: REVISAR SI ES NECESARIO CERRAR EL ROOM POR SOCKET Y BORRAR EN BASE DE DATOS
 @socketio.on('leave')
 def on_leave(data):
     elUsuario = definaElUsuario()
@@ -245,5 +263,4 @@ def verifiqueToken(token):
 
 # AQUI SE INICIALIZA EL PROGRAMA
 if __name__ == '__main__':
-    # app.run(debug=True, port=5000, host="0.0.0.0")
     socketio.run(app, host="0.0.0.0", port=5000)
