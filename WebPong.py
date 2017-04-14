@@ -168,7 +168,7 @@ def on_join(message):
             socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
         else:
             print("Room full.")
-            socketio.emit('join', 'error')
+            socketio.emit('message', 'error-001')
 
 
 @socketio.on('message')

@@ -23,7 +23,7 @@
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
 
     <script src="{{ url_for('static', filename='canvas.js') }}"></script>
-     <script
+    <script
             type="text/javascript"
             src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
     </script>
@@ -34,13 +34,23 @@
         }
 
         function enviarTexto() {
-            texto = $('#texto').val()
-            socket.emit('message', {message: texto, room: sessionStorage.getItem('room')})
+            texto = $('#texto').val();
+            socket.emit('message', {message: texto, room: sessionStorage.getItem('room')});
+            $('#texto').val("");
+        }
+
+        function leaveRoom() {
+            socket.emit('leave', {room: sessionStorage.getItem('room')});
+            sessionStorage.removeItem('room')
+            document.getElementById('chat-box').innerHTML = "";
         }
 
         socket.on('message', function (message) {
-            console.log("Message: " + message);
-            document.getElementById('chat-box').innerHTML += message + '<br>';
+            if (message == "error-001") {
+                alert("Esta sala se encuentra llena. Por favor elija otra.")
+            } else {
+                document.getElementById('chat-box').innerHTML += message + '<br>';
+            }
         });
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='pong.css') }}">
@@ -49,7 +59,7 @@
 </head>
 <body background="../static/background.gif">
 <div class="container-fluid">
-    <button class="btn btn-primary col-md-1">Salir</button>
+    <button class="btn btn-primary col-md-1" onclick="leaveRoom()">Salir</button>
 </div>
 <div class="container-fluid" id="iniciar">
     <button id="boton-iniciar" class="btn btn-primary col-md-1">Iniciar</button>
@@ -62,16 +72,24 @@
 <div class="container-fluid">
     <div class="col-md-6">
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom(), sessionStorage.setItem('room', 'A')">Sala A</button>
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'A'); joinRoom();">Sala
+                A
+            </button>
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom(), sessionStorage.setItem('room', 'B')">Sala B</button>
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'B'); joinRoom();">Sala
+                B
+            </button>
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom(), sessionStorage.setItem('room', 'C')">Sala C</button>
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'C'); joinRoom();">Sala
+                C
+            </button>
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom(), sessionStorage.setItem('room', 'D')">Sala D</button>
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'D'); joinRoom();">Sala
+                D
+            </button>
         </div>
     </div>
 </div>
