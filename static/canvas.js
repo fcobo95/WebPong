@@ -6,8 +6,8 @@ var animate = window.requestAnimationFrame ||
     };
 
 var canvas = document.createElement('canvas');
-var width = window.innerWidth - 550;
-var height = window.innerHeight - 350;
+var width = 400;
+var height = 600;
 canvas.width = width;
 canvas.height = height;
 canvas.border = 1;
@@ -109,9 +109,9 @@ Player.prototype.render = function () {
 Player.prototype.update = function () {
     for (var key in keysDown) {
         var value = Number(key);
-        if (value == 37) {
+        if (value === 37) {
             this.paddle.move(-10, 0);
-        } else if (value == 39) {
+        } else if (value === 39) {
             this.paddle.move(10, 0);
         } else {
             this.paddle.move(0, 0);
