@@ -1,3 +1,7 @@
+/**
+ * Created by Erick Fernando Cobo on 4/11/2017.
+ */
+
 var animate = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
@@ -6,38 +10,30 @@ var animate = window.requestAnimationFrame ||
     };
 
 var canvas = document.createElement('canvas');
-var width = 400;
-var height = 600;
+var width = window.innerWidth -100;
+var height = window.innerHeight - 100;
 canvas.width = width;
 canvas.height = height;
-canvas.border = 1;
-canvas.borderColor = 'white';
 var context = canvas.getContext('2d');
 
-window.onload = function () {
-    document.getElementById('game-container').appendChild(canvas);
-    animate(step);
-};
-
-
-var player = new Player();
-var computer = new Computer();
-var ball = new Ball(200, 300);
+var player1 = new Player1();
+var player2 = new Player2();
+var ball = new Ball(width / 2, height / 2);
 
 var keysDown = {};
 
 var render = function () {
     context.fillStyle = "#000000";
     context.fillRect(0, 0, width, height);
-    player.render();
-    computer.render();
+    player1.render();
+    player2.render();
     ball.render();
 };
 
 var update = function () {
-    player.update();
-    computer.update(ball);
-    ball.update(player.paddle, computer.paddle);
+    player1.update();
+    player2.update(ball);
+    ball.update(player1.paddle, player2.paddle);
 };
 
 var step = function () {
@@ -46,129 +42,145 @@ var step = function () {
     animate(step);
 };
 
-function Paddle(x, y, width, height) {
-    this.x = x;
+function Paddle(y, x, width, height) {
     this.y = y;
-    this.width = width;
+    this.x = x;
     this.height = height;
-    this.x_speed = 0;
-    this.y_speed = 0;
+    this.width = width;
+    this.xspeed = 0;
+    this.yspeed = 0;
 }
 
 Paddle.prototype.render = function () {
-    context.fillStyle = "#FFFFFF";
-    context.fillRect(this.x, this.y, this.width, this.height);
+    context.fillStyle = "#ffffff";
+    context.fillRect(this.x, this.y, this.height, this.width);
 };
 
-Paddle.prototype.move = function (x, y) {
-    this.x += x;
+Paddle.prototype.move = function (y, x) {
     this.y += y;
-    this.x_speed = x;
-    this.y_speed = y;
-    if (this.x < 0) {
-        this.x = 0;
-        this.x_speed = 0;
-    } else if (this.x + this.width > 400) {
-        this.x = 400 - this.width;
-        this.x_speed = 0;
+    this.x += x;
+    this.yspeed = y;
+    this.xspeed = x;
+    if (this.y < 0) {
+        this.y = 0;
+        this.yspeed = 0;
+    } else if (this.y + this.width > width) {
+        this.y = width - this.width;
+        this.yspeed = 0;
     }
 };
 
-function Computer() {
-    this.paddle = new Paddle(175, 10, 100, 10);
+function Player2() {
+    this.paddle = new Paddle((height / 2), width - 10, 200, 10);
 }
 
-Computer.prototype.render = function () {
+Player2.prototype.render = function () {
     this.paddle.render();
 };
 
-Computer.prototype.update = function (ball) {
-    var x_pos = ball.x;
-    var diff = -((this.paddle.x + (this.paddle.width / 2)) - x_pos);
-    if (diff < 0 && diff < -10) {
-        diff = -10;
-    } else if (diff > 0 && diff > 10) {
-        diff = 10;
+Player2.prototype.update = function (ball) {
+    var ypos = ball.y;
+    var diff = -((this.paddle.y + (this.paddle.width / 2)) - ypos);
+    if (diff < 0 && diff < -4) {
+        diff = -20;
+    } else if (diff > 0 && diff > 4) {
+        diff = 20;
     }
     this.paddle.move(diff, 0);
-    if (this.paddle.x < 0) {
-        this.paddle.x = 0;
-    } else if (this.paddle.x + this.paddle.width > 400) {
-        this.paddle.x = 400 - this.paddle.width;
+    if (this.paddle.y < 0) {
+        this.paddle.y = 0;
+    } else if (this.paddle.y + this.paddle.width > width) {
+        this.paddle.y = width - this.paddle.width;
     }
 };
 
-function Player() {
-    this.paddle = new Paddle(175, 580, 100, 10);
+function Player1() {
+    /* *************************************************************
+     * params(y, x, width, height) for the Paddle
+     *
+     * Tomamos el heigth del canvas, lo divido entre dos (mitad)
+     * y le resto la mitad del heigth del paddle, para que queden
+     * concentricos los dos objetos.
+     * *************************************************************
+     */
+    this.paddle = new Paddle((height / 2), 1, 200, 10);
 }
 
-Player.prototype.render = function () {
+Player1.prototype.render = function () {
     this.paddle.render();
 };
 
-Player.prototype.update = function () {
+Player1.prototype.update = function () {
     for (var key in keysDown) {
         var value = Number(key);
-        if (value === 37) {
+        if (value === 38) {
             this.paddle.move(-10, 0);
-        } else if (value === 39) {
-            this.paddle.move(10, 0);
-        } else {
+        } else if (value === 40) {
+            this.paddle.move(10, 0)
+        }
+        else {
             this.paddle.move(0, 0);
         }
     }
 };
 
-function Ball(x, y) {
-    this.x = x;
+function Ball(y, x) {
     this.y = y;
-    this.x_speed = 0;
-    this.y_speed = 3;
+    this.x = x;
+    this.yspeed = 10; // Esta linea de codigo nos sirve para cambiarle la velocidad a la pelota.
+    this.xspeed = 0;
 }
 
 Ball.prototype.render = function () {
     context.beginPath();
-    context.arc(this.x, this.y, 5, 2 * Math.PI, false);
-    context.fillStyle = "#FFFFFF";
+    context.arc(this.y, this.x, 5, 2 * Math.PI, false);
+    context.fillStyle = "#ffffff";
     context.fill();
 };
 
-Ball.prototype.update = function (paddle1, paddle2) {
-    this.x += this.x_speed;
-    this.y += this.y_speed;
-    var top_x = this.x - 5;
-    var top_y = this.y - 5;
-    var bottom_x = this.x + 5;
-    var bottom_y = this.y + 5;
+Ball.prototype.update = function(paddle1, paddle2) {
+  this.x += this.xspeed;
+  this.y += this.yspeed;
+  var top_x = this.x - 5;
+  var top_y = this.y - 5;
+  var bottom_x = this.x + 5;
+  var bottom_y = this.y + 5;
 
-    if (this.x - 5 < 0) {
-        this.x = 5;
-        this.x_speed = -this.x_speed;
-    } else if (this.x + 5 > 400) {
-        this.x = 395;
-        this.x_speed = -this.x_speed;
-    }
+  if(this.x - 5 < 0) { // hitting the left wall
+    this.x = 5;
+    this.xspeed = -this.xspeed;
+  } else if(this.x + 5 > width) { // hitting the right wall
+    this.x = width - 5;
+    this.xspeed = -this.xspeed;
+  }
 
-    if (this.y < 0 || this.y > 600) {
-        this.x_speed = 0;
-        this.y_speed = 3;
-        this.x = 200;
-        this.y = 300;
-    }
+  if(this.y < 0 || this.y > height) { // a point was scored
+    this.xspeed = 0;
+    this.yspeed = 3;
+    this.x = width/2;
+    this.y = height/2;
+  }
 
-    if (top_y > 300) {
-        if (top_y < (paddle1.y + paddle1.height) && bottom_y > paddle1.y && top_x < (paddle1.x + paddle1.width) && bottom_x > paddle1.x) {
-            this.y_speed = -3;
-            this.x_speed += (paddle1.x_speed / 2);
-            this.y += this.y_speed;
-        }
-    } else {
-        if (top_y < (paddle2.y + paddle2.height) && bottom_y > paddle2.y && top_x < (paddle2.x + paddle2.width) && bottom_x > paddle2.x) {
-            this.y_speed = 3;
-            this.x_speed += (paddle2.x_speed / 2);
-            this.y += this.y_speed;
-        }
+  if(top_y > height/2) {
+    if(top_y < (paddle1.y + paddle1.height) && bottom_y > paddle1.y && top_x < (paddle1.x + paddle1.width) && bottom_x > paddle1.x) {
+      // hit the player's paddle
+      this.yspeed = -3;
+      this.xspeed += (paddle1.xspeed / 2);
+      this.y += this.yspeed;
     }
+  } else {
+    if(top_y < (paddle2.y + paddle2.height) && bottom_y > paddle2.y && top_x < (paddle2.x + paddle2.width) && bottom_x > paddle2.x) {
+      // hit the computer's paddle
+      this.yspeed = 3;
+      this.xspeed += (paddle2.xspeed / 2);
+      this.y += this.yspeed;
+    }
+  }
+};
+
+window.onload = function () {
+    document.getElementById('game-container').appendChild(canvas);
+    animate(step);
 };
 
 window.addEventListener("keydown", function (event) {
