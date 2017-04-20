@@ -11,8 +11,8 @@ var animate = window.requestAnimationFrame ||
     };
 
 var canvas = document.createElement('canvas');
-var width = 800;
-var height = 600;
+var width = window.innerWidth - 100;
+var height = window.innerHeight - 100;
 canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
@@ -145,10 +145,10 @@ Ball.prototype.update = function (p1, pc) {
     }
 
     if (bottom_x < width / 2) {
-        if (bottom_x > p1.x && top_x < p1.x + p1.width && top_y > ((p1.y + p1.width) + p1.height) && bottom_y > (p1.y + p1.width)) {
+        if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
             // hit the player's paddle
             this.vely += (p1.velx / 2);
-            this.velx = -3;
+            this.velx = 3;
             this.x += this.velx;
         }
     } else {
