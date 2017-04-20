@@ -121,13 +121,43 @@ Ball.prototype.render = function () {
 };
 
 Ball.prototype.update = function (p1, pc) {
+    // Ball speed
     this.x += this.velx;
     this.y += this.vely;
-    var topy = this.y + 10;
-    var boty = this.y - 10;
-    var leftx = this.x + 10;
-    var rightx = this.x - 10;
+    var top_x = this.x - 10;
+    var top_y = this.y - 10;
+    var bottom_x = this.x + 10;
+    var bottom_y = this.y + 10;
 
+    if (this.y - 10 < 0) { // hitting the top wall
+        this.y = 10;
+        this.vely = -this.vely;
+    } else if (this.y + 10 > height) { // hitting the bottom wall
+        this.y = height - 10;
+        this.vely = -this.vely;
+    }
 
+    if (this.x < 0 || this.x > width) { // a point was scored
+        this.velx = 3;
+        this.vely = 0;
+        this.x = width / 2;
+        this.y = height / 2;
+    }
+
+    if (bottom_x < width / 2) {
+        if (bottom_x > p1.x && top_x < p1.x + p1.width && top_y > ((p1.y + p1.width) + p1.height) && bottom_y > (p1.y + p1.width)) {
+            // hit the player's paddle
+            this.vely += (p1.velx / 2);
+            this.velx = -3;
+            this.x += this.velx;
+        }
+    } else {
+        if (top_y < (pc.y + pc.height) && bottom_y > pc.y && top_x < (pc.x + pc.width) && bottom_x > pc.x) {
+            // hit the computer's paddle
+            this.vely = (pc.velx / 2);
+            this.velx += -3;
+            this.y += this.vely;
+        }
+    }
 };
 /* ************************** BALL ENDS ************************ */
