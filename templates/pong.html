@@ -23,7 +23,11 @@
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
 
     <script src="{{ url_for('static', filename='soloGame.js') }}"></script>
+    <script src="../static/soloGame.js"></script>
+
+    <script src="{{ url_for('static', filename='multiplayerGame.js') }}"></script>
     <script src="../static/multiplayerGame.js"></script>
+
     <script
             type="text/javascript"
             src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
