@@ -1,4 +1,8 @@
 /**
+ * Created by Erick Fernando Cobo on 4/20/2017.
+ */
+
+/**
  * Created by Erick Fernando Cobo on 4/11/2017.
  */
 
@@ -23,11 +27,19 @@ window.onload = function () {
 };
 
 window.addEventListener("keyup", function (event) {
-    delete keysDown[event.keyCode];
+    delete keysDownP1[event.keyCode];
 });
 
 window.addEventListener("keydown", function (event) {
-    keysDown[event.keyCode] = true;
+    keysDownP1[event.keyCode] = true;
+});
+
+window.addEventListener("keyup", function (event) {
+    delete keysDownP2[event.keyCode];
+});
+
+window.addEventListener("keydown", function (event) {
+    keysDownP2[event.keyCode] = true;
 });
 
 var number_for_score = [
@@ -49,28 +61,26 @@ var step = function () { // variable STEP
     animate(step);
 };
 
-var keysDown = [];
-var player = new Player(); // Nuevo jugador
-var computer = new Computer(); // Nueva IA
+var player1 = new Player1(); // Nuevo jugador
+var player2 = new Player2(); // Nueva IA
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
     context.fillStyle = "#000000";
     context.fillRect(0, 0, width, height);
-    player.render();
-    computer.render();
+    player1.render();
+    player2.render();
     ball.render();
 };
 
 var update = function () { // variable UPDATE
-    player.update();
-    computer.update(ball);
-    ball.update(player.paddle, computer.paddle);
+    player1.update();
+    player2.update(ball);
+    ball.update(player1.paddle, player2.paddle);
 };
 
 /* ********************* CANVAS SETUP ENDS ********************* */
 
-/* ************************************************************* */
 
 /* ************************ PADDLES BEGIN ********************** */
 // Esta es como la clase constructura de PADDLE
@@ -107,23 +117,53 @@ Paddle.prototype.move = function (x, y) {
 };
 /* ************************* PADDLES END *********************** */
 
-/* ************************************************************* */
 
 /* ************************ PLAYER BEGINS ********************** */
 // Decimos que PLAYER es una nueva instancia de PADDLE
-function Player() {
+function Player1() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
     // Args = (x, y, weigth, height)
     this.paddle = new Paddle(width - (width - 20), (height / 2) - 100, 20, 200);
 }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
-Player.prototype.render = function () {
+Player1.prototype.render = function () {
     this.paddle.render();
 };
 
-Player.prototype.update = function () {
-    for (var key in keysDown) {
+var keysDownP1 = [];
+
+Player1.prototype.update = function () {
+    for (var key in keysDownP1) {
+        var value = Number(key);
+        if (value === 87) { // left arrow
+            this.paddle.move(0, -10);
+        } else if (value === 83) { // right arrow
+            this.paddle.move(0, 10);
+        } else {
+            this.paddle.move(0, 0);
+        }
+    }
+};
+/* ************************* PLAYER ENDS *********************** */
+
+
+/* *********************** COMPUTER BEGINS ********************* */
+// Decimos que PLAYER es una nueva instancia de PADDLE
+function Player2() {
+    // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
+    // Args = (x, y, weigth, height)
+    this.paddle = new Paddle(width - 40, (height / 2) - 100, 20, 200);
+}
+
+// PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
+Player2.prototype.render = function () {
+    this.paddle.render();
+};
+var keysDownP2 = [];
+
+Player2.prototype.update = function () {
+    for (var key in keysDownP2) {
         var value = Number(key);
         if (value === 38) { // left arrow
             this.paddle.move(0, -10);
@@ -134,41 +174,8 @@ Player.prototype.update = function () {
         }
     }
 };
-/* ************************* PLAYER ENDS *********************** */
-
-/* ************************************************************* */
-
-/* *********************** COMPUTER BEGINS ********************* */
-// Decimos que PLAYER es una nueva instancia de PADDLE
-function Computer() {
-    // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
-    // Args = (x, y, weigth, height)
-    this.paddle = new Paddle(width - 40, (height / 2) - 100, 20, 200);
-}
-
-// PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
-Computer.prototype.render = function () {
-    this.paddle.render();
-};
-
-Computer.prototype.update = function (ball) {
-    var ypos = ball.y;
-    var avante = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
-    if (avante < 0 && avante < -10) {
-        avante = -10;
-    } else if (avante > 0 && avante > 10) {
-        avante = 10;
-    }
-    this.paddle.move(0, avante);
-    if (this.paddle.y < 0) {
-        this.paddle.y = 0;
-    } else if (this.paddle.y + this.paddle.height > height) {
-        this.paddle.y = height - this.paddle.height;
-    }
-};
 /* ************************ COMPUTER ENDS ********************** */
 
-/* ************************************************************* */
 
 /* ************************* BALL BEGINS *********************** */
 // Decimos que PLAYER es una nueva instancia de PADDLE
@@ -214,14 +221,14 @@ Ball.prototype.update = function (p1, p2) {
 
     if (bottom_x < width / 2) {
         if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
-            // hit the player's paddle
+            // hit the player1's paddle
             this.vely += (p1.vely / 2);
             this.velx = 10;
             this.y += this.vely;
         }
     } else {
         if (top_y < (p2.y + p2.height) && bottom_y > p2.y && top_x < (p2.x + p2.width) && bottom_x > p2.x) {
-            // hit the computer's paddle
+            // hit the player2's paddle
             this.vely += (p2.vely / 2);
             this.velx = -10;
             this.y += this.vely;
@@ -229,4 +236,3 @@ Ball.prototype.update = function (p1, p2) {
     }
 };
 /* ************************** BALL ENDS ************************ */
-
