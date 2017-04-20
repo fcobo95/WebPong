@@ -153,13 +153,13 @@ Computer.prototype.render = function () {
 
 Computer.prototype.update = function (ball) {
     var ypos = ball.y;
-    var diff = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
-    if (diff < 0 && diff < -10) {
-        diff = -10;
-    } else if (diff > 0 && diff > 10) {
-        diff = 10;
+    var avante = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
+    if (avante < 0 && avante < -10) {
+        avante = -10;
+    } else if (avante > 0 && avante > 10) {
+        avante = 10;
     }
-    this.paddle.move(0, diff);
+    this.paddle.move(0, avante);
     if (this.paddle.y < 0) {
         this.paddle.y = 0;
     } else if (this.paddle.y + this.paddle.height > height) {
