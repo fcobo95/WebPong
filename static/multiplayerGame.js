@@ -63,6 +63,7 @@ var step = function () { // variable STEP
 
 var player1 = new Player1(); // Nuevo jugador
 var player2 = new Player2(); // Nueva IA
+var line = new GameLine(0, width / 2, 15, height);
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
@@ -70,6 +71,7 @@ var render = function () { // variable RENDER
     context.fillRect(0, 0, width, height);
     player1.render();
     player2.render();
+    line.render();
     ball.render();
 };
 
@@ -80,6 +82,26 @@ var update = function () { // variable UPDATE
 };
 
 /* ********************* CANVAS SETUP ENDS ********************* */
+
+
+/* ********************* GAMELINE BEGINS *********************** */
+function GameLine(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+}
+
+GameLine.prototype.render = function () {
+    context.beginPath();
+    context.moveTo(width / 2, 0);
+    context.lineTo(width / 2, height);
+    context.strokeStyle = "#FFFFFF";
+    context.lineWidth = this.width;
+    context.stroke();
+    context.closePath();
+};
+/* ********************** GAMELINE ENDS ************************ */
 
 
 /* ************************ PADDLES BEGIN ********************** */
