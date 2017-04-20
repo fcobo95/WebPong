@@ -41,12 +41,12 @@
         function enviarTexto() {
             texto = $('#texto').val();
             socket.emit('message', {message: texto, room: sessionStorage.getItem('room')});
-            $('#texto').val("");
+            texto.val("");
         }
 
         function leaveRoom() {
             socket.emit('leave', {room: sessionStorage.getItem('room')});
-            sessionStorage.removeItem('room')
+            sessionStorage.removeItem('room');
             document.getElementById('chat-box').innerHTML = "";
             $('#botones-salas').show();
             $('#iniciar').hide();
@@ -55,7 +55,7 @@
         }
 
         socket.on('message', function (message) {
-            if (message == "error-001") {
+            if (message === "error-001") {
                 alert("Esta sala se encuentra llena. Por favor elija otra.")
             } else {
                 document.getElementById('chat-box').innerHTML += message + '<br>';

@@ -31,6 +31,7 @@ var step = function () { // variable STEP
 var player = new Player(); // Nuevo jugador
 var computer = new Computer(); // Nueva IA
 var ball = new Ball(width / 2, height / 2);
+
 var render = function () { // variable RENDER
     context.fillStyle = "#000000";
     context.fillRect(0, 0, width, height);
@@ -120,7 +121,7 @@ Ball.prototype.render = function () {
     context.fill(); // se rellena la BALL para que sea visible en el canvas.
 };
 
-Ball.prototype.update = function (p1, pc) {
+Ball.prototype.update = function (p1, p2) {
     // Ball speed
     this.x += this.velx;
     this.y += this.vely;
@@ -138,7 +139,7 @@ Ball.prototype.update = function (p1, pc) {
     }
 
     if (this.x < 0 || this.x > width) { // a point was scored
-        this.velx = 3;
+        this.velx = 5;
         this.vely = 0;
         this.x = width / 2;
         this.y = height / 2;
@@ -148,16 +149,17 @@ Ball.prototype.update = function (p1, pc) {
         if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
             // hit the player's paddle
             this.vely += (p1.velx / 2);
-            this.velx = 3;
+            this.velx = 5;
             this.x += this.velx;
         }
     } else {
-        if (top_y < (pc.y + pc.height) && bottom_y > pc.y && top_x < (pc.x + pc.width) && bottom_x > pc.x) {
+        if (top_y < (p2.y + p2.height) && bottom_y > p2.y && top_x < (p2.x + p2.width) && bottom_x > p2.x) {
             // hit the computer's paddle
-            this.vely = (pc.velx / 2);
-            this.velx += -3;
+            this.vely = (p2.velx / 2);
+            this.velx += -5;
             this.y += this.vely;
         }
     }
 };
 /* ************************** BALL ENDS ************************ */
+
