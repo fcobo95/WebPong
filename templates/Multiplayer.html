@@ -21,13 +21,46 @@
             crossorigin="anonymous"></script>
     <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
-    <script src="{{ url_for('static', filename='multiplayerGame.js') }}"></script>
-    <script src="../static/multiplayerGame.js"></script>
+    <script src="{{ url_for('static', filename='soloGame.js') }}"></script>
+    <script src="../static/soloGame.js"></script>
     <script
             type="text/javascript"
             src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
     </script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        function joinRoom() {
+            socket.emit('join', {room: sessionStorage.getItem('room')});
+            $('#botones-salas').hide();
+            $('#iniciar').show();
+            $('#salir').show();
+            $('#chat').show();
+        }
 
+        function enviarTexto() {
+            texto = $('#texto').val();
+            socket.emit('message', {message: texto, room: sessionStorage.getItem('room')});
+            texto.val("");
+        }
+
+        function leaveRoom() {
+            socket.emit('leave', {room: sessionStorage.getItem('room')});
+            sessionStorage.removeItem('room');
+            document.getElementById('chat-box').innerHTML = "";
+            $('#botones-salas').show();
+            $('#iniciar').hide();
+            $('#salir').hide();
+            $('#chat').hide();
+        }
+
+        socket.on('message', function (message) {
+            if (message === "error-001") {
+                alert("Esta sala se encuentra llena. Por favor elija otra.")
+            } else {
+                document.getElementById('chat-box').innerHTML += message + '<br>';
+            }
+        });
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='pong.css') }}">
     <meta charset="UTF-8">
     <title>Pong Game</title>
@@ -41,6 +74,42 @@
 </div>
 <div class="container-fluid">
     <div id="game-container" class="row col-md-12">
+    </div>
+
+</div>
+<div class="container-fluid">
+    <div class="col-md-6" id="botones-salas">
+        <div class="col-md-3">
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'A'); joinRoom();">Sala
+                A
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'B'); joinRoom();">Sala
+                B
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'C'); joinRoom();">Sala
+                C
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary game-button" onclick="sessionStorage.setItem('room', 'D'); joinRoom();">Sala
+                D
+            </button>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div id="chat" hidden>
+        <div id="chat-box"
+             style="height:100px;width:920px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+        </div>
+        <div>
+            <input type="text" id="texto">
+            <button class="btn btn-primary game-button" onclick="enviarTexto()">Enviar</button>
+        </div>
     </div>
 </div>
 </body>
