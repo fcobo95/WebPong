@@ -21,8 +21,8 @@
             crossorigin="anonymous"></script>
     <!-- The integrity and crossorigin attributes are used for Subresource Integrity (SRI) checking. This allows browsers to ensure that resources hosted on third-party servers have not been tampered with.
     Use of SRI is recommended as a best-practice, whenever libraries are loaded from a third-party source. Read more at srihash.org -->
-    <script src="{{ url_for('static', filename='soloGame.js') }}"></script>
-    <script src="../static/soloGame.js"></script>
+    <script src="{{ url_for('static', filename='multiplayerGame.js') }}"></script>
+    <script src="../static/multiplayerGame.js"></script>
     <script
             type="text/javascript"
             src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
@@ -70,7 +70,7 @@
     <button class="btn btn-primary col-md-1" id="boton-salir" onclick="leaveRoom()">Salir</button>
 </div>
 <div class="container-fluid" id="iniciar" hidden>
-    <button id="boton-iniciar" class="btn btn-primary col-md-1">Iniciar</button>
+    <button id="boton-iniciar" class="btn btn-primary col-md-1" onclick="startGame()">Iniciar</button>
 </div>
 <div class="container-fluid">
     <div id="game-container" class="row col-md-12">

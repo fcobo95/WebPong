@@ -65,9 +65,13 @@ def index():
 
 
 # TODO: AGREGAR AUTENTICACION
-@app.route('/game')
-def game():
+@app.route('/solo')
+def soloGame():
     return render_template('Soloplayer.html')
+
+@app.route('/multiplayer')
+def multiplayerGame():
+    return render_template('Multiplayer.html')
 
 
 # ESTA FUNCION RECIBE UN FORM, EL CUAL PARSEA PARA OBTENER TODOS LOS DATOS INDIVIDUALES. REVISA
