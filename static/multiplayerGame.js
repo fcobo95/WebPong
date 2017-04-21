@@ -1,8 +1,4 @@
 /**
- * Created by Erick Fernando Cobo on 4/20/2017.
- */
-
-/**
  * Created by Erick Fernando Cobo on 4/11/2017.
  */
 
