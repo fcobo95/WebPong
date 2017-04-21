@@ -141,6 +141,7 @@ Paddle.prototype.move = function (x, y) {
 
 
 /* ************************ PLAYER BEGINS ********************** */
+var p1Score;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player1() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -170,7 +171,8 @@ Player1.prototype.update = function () {
 /* ************************* PLAYER ENDS *********************** */
 
 
-/* *********************** COMPUTER BEGINS ********************* */
+/* *********************** PLAYER BEGINS *********************** */
+var p2Score
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player2() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -196,7 +198,7 @@ Player2.prototype.update = function () {
         }
     }
 };
-/* ************************ COMPUTER ENDS ********************** */
+/* ************************ PLAYER ENDS ************************ */
 
 
 /* ************************* BALL BEGINS *********************** */

@@ -110,6 +110,7 @@ Paddle.prototype.move = function (x, y) {
 /* ************************************************************* */
 
 /* ************************ PLAYER BEGINS ********************** */
+var p1Score;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -139,6 +140,7 @@ Player.prototype.update = function () {
 /* ************************************************************* */
 
 /* *********************** COMPUTER BEGINS ********************* */
+var pcScore;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Computer() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
