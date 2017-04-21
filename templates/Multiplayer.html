@@ -27,40 +27,7 @@
             type="text/javascript"
             src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
     </script>
-    <script type="text/javascript" charset="utf-8">
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        function joinRoom() {
-            socket.emit('join', {room: sessionStorage.getItem('room')});
-            $('#botones-salas').hide();
-            $('#iniciar').show();
-            $('#salir').show();
-            $('#chat').show();
-        }
 
-        function enviarTexto() {
-            texto = $('#texto').val();
-            socket.emit('message', {message: texto, room: sessionStorage.getItem('room')});
-            texto.val("");
-        }
-
-        function leaveRoom() {
-            socket.emit('leave', {room: sessionStorage.getItem('room')});
-            sessionStorage.removeItem('room');
-            document.getElementById('chat-box').innerHTML = "";
-            $('#botones-salas').show();
-            $('#iniciar').hide();
-            $('#salir').hide();
-            $('#chat').hide();
-        }
-
-        socket.on('message', function (message) {
-            if (message === "error-001") {
-                alert("Esta sala se encuentra llena. Por favor elija otra.")
-            } else {
-                document.getElementById('chat-box').innerHTML += message + '<br>';
-            }
-        });
-    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='pong.css') }}">
     <meta charset="UTF-8">
     <title>Pong Game</title>
