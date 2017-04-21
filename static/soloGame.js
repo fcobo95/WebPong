@@ -52,6 +52,9 @@ var step = function () { // variable STEP
 var keysDown = [];
 var player = new Player(); // Nuevo jugador
 var computer = new Computer(); // Nueva IA
+var line = new GameLine(0, width / 2, 15, height);
+var score1 = new GameScoreP1(width / 2 - 600, 50);
+var score2 = new GameScorePC(width - 600, 50);
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
@@ -59,6 +62,9 @@ var render = function () { // variable RENDER
     context.fillRect(0, 0, width, height);
     player.render();
     computer.render();
+    line.render();
+    score1.render();
+    score2.render();
     ball.render();
 };
 
@@ -70,7 +76,49 @@ var update = function () { // variable UPDATE
 
 /* ********************* CANVAS SETUP ENDS ********************* */
 
-/* ************************************************************* */
+/* ********************* GAMELINE BEGINS *********************** */
+function GameLine(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+}
+
+GameLine.prototype.render = function () {
+    context.beginPath();
+    context.moveTo(width / 2, 0);
+    context.lineTo(width / 2, height);
+    context.strokeStyle = "#FFFFFF";
+    context.lineWidth = this.width;
+    context.stroke();
+    context.closePath();
+};
+/* ********************** GAMELINE ENDS ************************ */
+
+
+/* ********************* GAMESCORE BEGINS ********************** */
+function GameScoreP1(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+GameScoreP1.prototype.render = function () {
+    context.font = "50px Monospace";
+    context.fillStyle = "#FFFFFF";
+    context.fillText("Player 1: " + p1Score, this.x, this.y);
+};
+
+function GameScorePC(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+GameScorePC.prototype.render = function () {
+    context.font = "50px Monospace";
+    context.fillStyle = "#FFFFFF";
+    context.fillText("Computer: " + pcScore, this.x, this.y);
+};
+/* ********************** GAMESCORE ENDS *********************** */
 
 /* ************************ PADDLES BEGIN ********************** */
 // Esta es como la clase constructura de PADDLE
@@ -110,7 +158,7 @@ Paddle.prototype.move = function (x, y) {
 /* ************************************************************* */
 
 /* ************************ PLAYER BEGINS ********************** */
-var p1Score;
+var p1Score = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -140,7 +188,7 @@ Player.prototype.update = function () {
 /* ************************************************************* */
 
 /* *********************** COMPUTER BEGINS ********************* */
-var pcScore;
+var pcScore = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Computer() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.

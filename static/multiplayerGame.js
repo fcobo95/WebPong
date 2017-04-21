@@ -64,6 +64,8 @@ var step = function () { // variable STEP
 var player1 = new Player1(); // Nuevo jugador
 var player2 = new Player2(); // Nueva IA
 var line = new GameLine(0, width / 2, 15, height);
+var score1 = new GameScoreP1(width / 2 - 600, 50);
+var score2 = new GameScoreP2(width - 600, 50);
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
@@ -72,6 +74,8 @@ var render = function () { // variable RENDER
     player1.render();
     player2.render();
     line.render();
+    score1.render();
+    score2.render();
     ball.render();
 };
 
@@ -102,6 +106,31 @@ GameLine.prototype.render = function () {
     context.closePath();
 };
 /* ********************** GAMELINE ENDS ************************ */
+
+
+/* ********************* GAMESCORE BEGINS ********************** */
+function GameScoreP1(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+GameScoreP1.prototype.render = function () {
+    context.font = "50px Monospace";
+    context.fillStyle = "#FFFFFF";
+    context.fillText("Player 1: " + p1Score, this.x, this.y);
+};
+
+function GameScoreP2(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+GameScoreP2.prototype.render = function () {
+    context.font = "50px Monospace";
+    context.fillStyle = "#FFFFFF";
+    context.fillText("Player 2: " + p2Score, this.x, this.y);
+};
+/* ********************** GAMESCORE ENDS *********************** */
 
 
 /* ************************ PADDLES BEGIN ********************** */
@@ -141,7 +170,7 @@ Paddle.prototype.move = function (x, y) {
 
 
 /* ************************ PLAYER BEGINS ********************** */
-var p1Score;
+var p1Score = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player1() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -172,7 +201,7 @@ Player1.prototype.update = function () {
 
 
 /* *********************** PLAYER BEGINS *********************** */
-var p2Score
+var p2Score = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player2() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
