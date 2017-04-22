@@ -161,19 +161,21 @@ def on_join(message):
     laSala = message['room']
     laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
     if laBusqueda is None:
-        localDatabase.Salas.insert_one({'_id': laSala, 'UsuarioA': elUsuario, 'UsuarioB': ''})
+        localDatabase.Salas.insert_one({'_id': laSala, 'Usuario1': elUsuario, 'Usuario2': ''})
         join_room(laSala)
         print(elUsuario + " joined.")
+        socketio.emit('join', '1')
         socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
     else:
         if laBusqueda['UsuarioB'] == '':
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': elUsuario}})
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': elUsuario}})
             join_room(laSala)
             print(elUsuario + " joined.")
+            socketio.emit('join', '2')
             socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
         else:
             print("Room full.")
-            socketio.emit('message', 'error-001')
+            socketio.emit('join', 'full')
 
 
 @socketio.on('message')
@@ -198,21 +200,21 @@ def keypress(keypress):
     socketio.emit('keypress', elMovimientoComoJSON, room=laSala)
 
 
-# TODO: REVISAR SI ES NECESARIO CERRAR EL ROOM POR SOCKET Y BORRAR EN BASE DE DATOS
 @socketio.on('leave')
 def on_leave(data):
     elUsuario = definaElUsuario()
     laSala = data['room']
     laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
-    if laBusqueda['UsuarioA'] == elUsuario:
-        elOtroUsuario = laBusqueda['UsuarioB']
+    if laBusqueda['Usuario1'] == elUsuario:
+        elOtroUsuario = laBusqueda['Usuario2']
         if elOtroUsuario != "":
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioA': elOtroUsuario}})
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario1': elOtroUsuario}})
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
+            socketio.emit('join', '1')
         else:
             localDatabase.Salas.remove({'_id': laSala})
-    elif laBusqueda['UsuarioB'] == elUsuario:
-        localDatabase.Salas.update({'_id': laSala}, {'$set': {'UsuarioB': ""}})
+    elif laBusqueda['Usuario2'] == elUsuario:
+        localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
     leave_room(laSala)
     print(elUsuario + " has left the room.")
     socketio.send(elUsuario + ' has left the room.', room=laSala)

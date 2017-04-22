@@ -5,11 +5,24 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 function joinRoom() {
     socket.emit('join', {room: sessionStorage.getItem('room')});
-    $('#botones-salas').hide();
-    $('#iniciar').show();
-    $('#salir').show();
-    $('#chat').show();
 }
+
+socket.on('join', function (text) {
+    if (text === '1') {
+        sessionStorage.setItem('player', '1')
+    } else if (text === ' 2') {
+        sessionStorage.setItem('player', '2')
+    }
+
+    if (text !== "error") {
+        $('#botones-salas').hide();
+        $('#iniciar').show();
+        $('#salir').show();
+        $('#chat').show();
+    } else {
+        alert("Esta sala se encuentra llena. Por favor elija otra.")
+    }
+});
 
 function enviarTexto() {
     texto = $('#texto').val();
@@ -17,23 +30,20 @@ function enviarTexto() {
     texto.val("");
 }
 
+socket.on('message', function (message) {
+    document.getElementById('chat-box').innerHTML += message + '<br>';
+});
+
 function leaveRoom() {
     socket.emit('leave', {room: sessionStorage.getItem('room')});
     sessionStorage.removeItem('room');
+    sessionStorage.removeItem('player');
     document.getElementById('chat-box').innerHTML = "";
     $('#botones-salas').show();
     $('#iniciar').hide();
     $('#salir').hide();
     $('#chat').hide();
 }
-
-socket.on('message', function (message) {
-    if (message === "error-001") {
-        alert("Esta sala se encuentra llena. Por favor elija otra.")
-    } else {
-        document.getElementById('chat-box').innerHTML += message + '<br>';
-    }
-});
 
 /* ********************* CANVAS SETUP BEGINS ********************* */
 var animate = window.requestAnimationFrame ||
@@ -215,16 +225,18 @@ Player1.prototype.render = function () {
 var keysDownP1 = [];
 
 Player1.prototype.update = function () {
-    for (var key in keysDownP1) {
-        var value = Number(key);
-        if (value === 87) { // W
-            socket.emit('keypress', {key: 87, player: 1, room: sessionStorage.getItem('room')});
-            //this.paddle.move(0, -15);
-        } else if (value === 83) { // S
-            socket.emit('keypress', {key: 83, player: 1, room: sessionStorage.getItem('room')});
-            //this.paddle.move(0, 15);
-        } else {
-            this.paddle.move(0, 0);
+    if (sessionStorage.getItem('player') === '1') {
+        for (var key in keysDownP1) {
+            var value = Number(key);
+            if (value === 87) { // W
+                socket.emit('keypress', {key: 87, player: 1, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, -15);
+            } else if (value === 83) { // S
+                socket.emit('keypress', {key: 83, player: 1, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, 15);
+            } else {
+                this.paddle.move(0, 0);
+            }
         }
     }
 };
@@ -247,16 +259,18 @@ Player2.prototype.render = function () {
 var keysDownP2 = [];
 
 Player2.prototype.update = function () {
-    for (var key in keysDownP2) {
-        var value = Number(key);
-        if (value === 38) { // UP
-            socket.emit('keypress', {key: 38, player: 2, room: sessionStorage.getItem('room')});
-            //this.paddle.move(0, -15);
-        } else if (value === 40) { // DOWN
-            socket.emit('keypress', {key: 40, player: 2, room: sessionStorage.getItem('room')});
-            //this.paddle.move(0, 15);
-        } else {
-            this.paddle.move(0, 0);
+    if (sessionStorage.getItem('player') === '2') {
+        for (var key in keysDownP2) {
+            var value = Number(key);
+            if (value === 87) { // UP
+                socket.emit('keypress', {key: 87, player: 2, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, -15);
+            } else if (value === 83) { // DOWN
+                socket.emit('keypress', {key: 83, player: 2, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, 15);
+            } else {
+                this.paddle.move(0, 0);
+            }
         }
     }
 };
@@ -268,17 +282,17 @@ socket.on('keypress', function (keypress) {
     var keypressJSON = JSON.parse(keypress);
     if (keypressJSON['key'] === 87) {
         if (keypressJSON['player'] === 1) {
-            Player1.paddle.move(0, 15)
+            player1.paddle.move(0, -15);
         }
         else if (keypressJSON['player'] === 2) {
-            Player2.paddle.move(0, 15)
+            player2.paddle.move(0, -15)
         }
     } else if (keypressJSON['key'] === 83) {
         if (keypressJSON['player'] === 1) {
-            Player1.paddle.move(0, -15)
+            player1.paddle.move(0, 15)
         }
         else if (keypressJSON['player'] === 2) {
-            Player2.paddle.move(0, -15)
+            player2.paddle.move(0, 15)
         }
     }
 });
