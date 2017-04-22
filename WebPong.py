@@ -69,6 +69,7 @@ def index():
 def soloGame():
     return render_template('Soloplayer.html')
 
+
 @app.route('/multiplayer')
 def multiplayerGame():
     return render_template('Multiplayer.html')
@@ -181,6 +182,21 @@ def handle_message(message):
     laSala = message['room']
     print('Mensaje: ' + elMensaje + " Sala: " + laSala)
     socketio.emit('message', elMensaje, room=laSala)
+
+
+@socketio.on('keypress')
+def keypress(keypress):
+    laTecla = keypress['key']
+    elJugador = keypress['player']
+    laSala = keypress['room']
+    elMovimiento = {
+        "player": elJugador,
+        "key": laTecla
+    }
+    elMovimientoComoJSON = json.dumps(elMovimiento)
+    print('Jugador: ' + elJugador + ". Tecla: " + laTecla + ". Sala: " + laSala)
+    socketio.emit('keypress', elMovimientoComoJSON, room=laSala)
+
 
 # TODO: REVISAR SI ES NECESARIO CERRAR EL ROOM POR SOCKET Y BORRAR EN BASE DE DATOS
 @socketio.on('leave')

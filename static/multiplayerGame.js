@@ -1,6 +1,38 @@
 /**
  * Created by Erick Fernando Cobo on 4/11/2017.
  */
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+function joinRoom() {
+    socket.emit('join', {room: sessionStorage.getItem('room')});
+    $('#botones-salas').hide();
+    $('#iniciar').show();
+    $('#salir').show();
+    $('#chat').show();
+}
+
+function enviarTexto() {
+    texto = $('#texto').val();
+    socket.emit('message', {message: texto, room: sessionStorage.getItem('room')});
+    texto.val("");
+}
+
+function leaveRoom() {
+    socket.emit('leave', {room: sessionStorage.getItem('room')});
+    sessionStorage.removeItem('room');
+    document.getElementById('chat-box').innerHTML = "";
+    $('#botones-salas').show();
+    $('#iniciar').hide();
+    $('#salir').hide();
+    $('#chat').hide();
+}
+
+socket.on('message', function (message) {
+    if (message === "error-001") {
+        alert("Esta sala se encuentra llena. Por favor elija otra.")
+    } else {
+        document.getElementById('chat-box').innerHTML += message + '<br>';
+    }
+});
 
 function startGame() {
     /* ********************* CANVAS SETUP BEGINS ********************* */
@@ -172,7 +204,7 @@ function startGame() {
     function Player1() {
         // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
         // Args = (x, y, weigth, height)
-        this.paddle = new Paddle(width - (width - 20), (height / 2) - 100, 20, 200);
+        this.paddle = new Paddle(width - (width - 20), (height / 2) - 50, 20, 100);
     }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
@@ -185,10 +217,12 @@ function startGame() {
     Player1.prototype.update = function () {
         for (var key in keysDownP1) {
             var value = Number(key);
-            if (value === 87) { // left arrow
-                this.paddle.move(0, -10);
-            } else if (value === 83) { // right arrow
-                this.paddle.move(0, 10);
+            if (value === 87) { // W
+                socket.emit('keypress', {key: 87, player: 1, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, -15);
+            } else if (value === 83) { // S
+                socket.emit('keypress', {key: 83, player: 1, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, 15);
             } else {
                 this.paddle.move(0, 0);
             }
@@ -203,7 +237,7 @@ function startGame() {
     function Player2() {
         // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
         // Args = (x, y, weigth, height)
-        this.paddle = new Paddle(width - 40, (height / 2) - 100, 20, 200);
+        this.paddle = new Paddle(width - 40, (height / 2) - 50, 20, 100);
     }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
@@ -215,10 +249,12 @@ function startGame() {
     Player2.prototype.update = function () {
         for (var key in keysDownP2) {
             var value = Number(key);
-            if (value === 38) { // left arrow
-                this.paddle.move(0, -10);
-            } else if (value === 40) { // right arrow
-                this.paddle.move(0, 10);
+            if (value === 38) { // UP
+                socket.emit('keypress', {key: 38, player: 2, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, -15);
+            } else if (value === 40) { // DOWN
+                socket.emit('keypress', {key: 40, player: 2, room: sessionStorage.getItem('room')});
+                //this.paddle.move(0, 15);
             } else {
                 this.paddle.move(0, 0);
             }
@@ -226,7 +262,27 @@ function startGame() {
     };
     /* ************************ PLAYER ENDS ************************ */
 
+    /* ************************ SOCKET BEGINS ************************ */
 
+    socket.on('keypress', function (keypress) {
+        if (keypress['key'] === "87") {
+            if (keypress['player'] === "1") {
+                Player1.paddle.move(0, 15)
+            }
+            else if (keypress['player'] === "2") {
+                Player2.paddle.move(0, 15)
+            }
+        } else if (keypress['key'] === 83) {
+            if (keypress['player'] === "1") {
+                Player1.paddle.move(0, -15)
+            }
+            else if (keypress['player'] === "2") {
+                Player2.paddle.move(0, -15)
+            }
+        }
+    });
+
+    /* ************************ SOCKET ENDS ************************ */
     /* ************************* BALL BEGINS *********************** */
 // Decimos que PLAYER es una nueva instancia de PADDLE
     function Ball(x, y) {
@@ -241,7 +297,7 @@ function startGame() {
     Ball.prototype.render = function () {
         context.beginPath(); // Para empezar a dibujar el circulo
         context.arc(this.x, this.y, this.radius, Math.PI * 2, 0); // arc necesita un x, y, r, angula_inicial, angulo_final
-        context.fillStyle = "#fff";
+        context.fillStyle = "#FFFFFF";
         context.fill(); // se rellena la BALL para que sea visible en el canvas.
     };
 
@@ -287,4 +343,3 @@ function startGame() {
     };
     /* ************************** BALL ENDS ************************ */
 }
-
