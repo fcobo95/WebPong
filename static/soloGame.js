@@ -1,7 +1,6 @@
 /**
  * Created by Erick Fernando Cobo on 4/11/2017.
  */
-function startGame() {
     /* ********************* CANVAS SETUP BEGINS ********************* */
     var animate = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -279,5 +278,3 @@ function startGame() {
         }
     };
     /* ************************** BALL ENDS ************************ */
-
-}

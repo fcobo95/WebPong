@@ -194,7 +194,7 @@ def keypress(keypress):
         "key": laTecla
     }
     elMovimientoComoJSON = json.dumps(elMovimiento)
-    print('Jugador: ' + elJugador + ". Tecla: " + laTecla + ". Sala: " + laSala)
+    print('Jugador: ' + str(elJugador) + ". Tecla: " + str(laTecla) + ". Sala: " + str(laSala))
     socketio.emit('keypress', elMovimientoComoJSON, room=laSala)
 
 
