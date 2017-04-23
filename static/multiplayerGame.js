@@ -1,5 +1,4 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
-
 function joinRoom() {
     socket.emit('join', {room: sessionStorage.getItem('room')});
     $('#botones-salas').hide();
@@ -9,20 +8,15 @@ function joinRoom() {
 }
 
 socket.on('join', function (text) {
-    if (text === '1') {
+    var elJugadorActual = sessionStorage.getItem('player');
+    if (elJugadorActual === null) {
+        if (text === '1') {
+            sessionStorage.setItem('player', '1');
+        } else if (text === '2') {
+            sessionStorage.setItem('player', '2');
+        }
+    } else if (elJugadorActual === '2'){
         sessionStorage.setItem('player', '1');
-        alert(sessionStorage.getItem('player'));
-
-    } else if (text === '2') {
-        sessionStorage.setItem('player', '2');
-        alert(sessionStorage.getItem('player'));
-
-    }
-
-    if (text !== 'full') {
-        alert("Hay campo.")
-    } else {
-        alert("Esta sala se encuentra llena. Por favor elija otra.")
     }
 });
 
@@ -39,13 +33,14 @@ socket.on('message', function (message) {
 function leaveRoom() {
     socket.emit('leave', {room: sessionStorage.getItem('room')});
     sessionStorage.removeItem('room');
-    sessionStorage.removeItem('player');
+    sessionStorage.removeItem('player')
     document.getElementById('chat-box').innerHTML = "";
     $('#botones-salas').show();
     $('#iniciar').hide();
     $('#salir').hide();
     $('#chat').hide();
 }
+
 
 /* ********************* CANVAS SETUP BEGINS ********************* */
 var animate = window.requestAnimationFrame ||
