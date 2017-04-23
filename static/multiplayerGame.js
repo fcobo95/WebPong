@@ -9,14 +9,17 @@ function joinRoom() {
 
 socket.on('join', function (text) {
     var elJugadorActual = sessionStorage.getItem('player');
-    if (elJugadorActual === null) {
+    var laSalaActual = sessionStorage.getItem('room');
+    if (elJugadorActual === null && laSalaActual !== null) {
         if (text === '1') {
             sessionStorage.setItem('player', '1');
         } else if (text === '2') {
             sessionStorage.setItem('player', '2');
         }
     } else if (elJugadorActual === '2') {
-        sessionStorage.setItem('player', '1');
+        if (text === '1') {
+            sessionStorage.setItem('player', '1');
+        }
     }
 });
 
@@ -103,6 +106,8 @@ var line = new GameLine(0, width / 2, 3, height);
 var score1 = new GameScoreP1(30, 50);
 var score2 = new GameScoreP2(445, 50);
 var ball = new Ball(width / 2, height / 2);
+var p1Score = 0;
+var p2Score = 0;
 
 var render = function () { // variable RENDER
     context.fillStyle = "#000000";
@@ -110,8 +115,8 @@ var render = function () { // variable RENDER
     player1.render();
     player2.render();
     line.render();
-    score1.render();
-    score2.render();
+    score1.render(p1Score);
+    score2.render(p2Score);
     ball.render();
 };
 
@@ -150,7 +155,7 @@ function GameScoreP1(x, y) {
     this.y = y;
 }
 
-GameScoreP1.prototype.render = function () {
+GameScoreP1.prototype.render = function (p1Score) {
     context.font = "50px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 1: " + p1Score, this.x, this.y);
@@ -161,7 +166,7 @@ function GameScoreP2(x, y) {
     this.y = y;
 }
 
-GameScoreP2.prototype.render = function () {
+GameScoreP2.prototype.render = function (p2Score) {
     context.font = "50px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 2: " + p2Score, this.x, this.y);
@@ -206,7 +211,7 @@ Paddle.prototype.move = function (x, y) {
 
 
 /* ************************ PLAYER BEGINS ********************** */
-var p1Score = 0;
+
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player1() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -241,7 +246,7 @@ Player1.prototype.update = function () {
 
 
 /* *********************** PLAYER BEGINS *********************** */
-var p2Score = 0;
+
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Player2() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
@@ -346,6 +351,13 @@ Ball.prototype.update = function (p1, p2) {
             //this.vely = 0;
             //this.x = width / 2;
             //this.y = height / 2;
+            if (ball.x < 0) {
+                p2Score++;
+                score2.render(p2Score);
+            } else if (ball.x > width) {
+                p1Score++;
+                score1.render(p1Score);
+            }
             socket.emit('ballmove', {
                 'velx': 10,
                 'vely': 0,
@@ -395,11 +407,20 @@ socket.on('ballmove', function (text) {
         ball.vely = elTextoComoJSON['vely'];
     }
 
-    if (ball.x < 0 || ball.x > width) { // a point was scored
+    if (ball.x < 0 || ball.x > width) {
+        alert('Gol.')// a point was scored
+        // if (ball.x < 0){
+        //     p2Score++;
+        //     score2.render(p2Score);
+        // } else if (ball.x > width){
+        //     p1Score++;
+        //     score1.render(p1Score);
+        // }
         ball.velx = elTextoComoJSON['velx'];
         ball.vely = elTextoComoJSON['vely'];
         ball.x = elTextoComoJSON['x'];
         ball.y = elTextoComoJSON['y'];
+
     }
 
     if (ball.bottom_x < width / 2) {
