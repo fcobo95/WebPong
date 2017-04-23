@@ -1,24 +1,26 @@
-/**
- * Created by Erick Fernando Cobo on 4/11/2017.
- */
-
 var socket = io.connect('http://' + document.domain + ':' + location.port);
+
 function joinRoom() {
     socket.emit('join', {room: sessionStorage.getItem('room')});
+    $('#botones-salas').hide();
+    $('#iniciar').show();
+    $('#salir').show();
+    $('#chat').show();
 }
 
 socket.on('join', function (text) {
     if (text === '1') {
-        sessionStorage.setItem('player', '1')
-    } else if (text === ' 2') {
-        sessionStorage.setItem('player', '2')
+        sessionStorage.setItem('player', '1');
+        alert(sessionStorage.getItem('player'));
+
+    } else if (text === '2') {
+        sessionStorage.setItem('player', '2');
+        alert(sessionStorage.getItem('player'));
+
     }
 
-    if (text !== "error") {
-        $('#botones-salas').hide();
-        $('#iniciar').show();
-        $('#salir').show();
-        $('#chat').show();
+    if (text !== 'full') {
+        alert("Hay campo.")
     } else {
         alert("Esta sala se encuentra llena. Por favor elija otra.")
     }

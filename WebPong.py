@@ -144,7 +144,7 @@ def checkRoom():
     if laBusqueda is None:
         return 'True'
     else:
-        if laBusqueda['UsuarioB'] == '':
+        if laBusqueda['Usuario2'] == '':
             return 'True'
         else:
             return 'False'
@@ -167,7 +167,7 @@ def on_join(message):
         socketio.emit('join', '1')
         socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
     else:
-        if laBusqueda['UsuarioB'] == '':
+        if laBusqueda['Usuario2'] == '':
             localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': elUsuario}})
             join_room(laSala)
             print(elUsuario + " joined.")
