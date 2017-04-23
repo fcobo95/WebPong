@@ -15,7 +15,7 @@ socket.on('join', function (text) {
         } else if (text === '2') {
             sessionStorage.setItem('player', '2');
         }
-    } else if (elJugadorActual === '2'){
+    } else if (elJugadorActual === '2') {
         sessionStorage.setItem('player', '1');
     }
 });
@@ -33,7 +33,7 @@ socket.on('message', function (message) {
 function leaveRoom() {
     socket.emit('leave', {room: sessionStorage.getItem('room')});
     sessionStorage.removeItem('room');
-    sessionStorage.removeItem('player')
+    sessionStorage.removeItem('player');
     document.getElementById('chat-box').innerHTML = "";
     $('#botones-salas').show();
     $('#iniciar').hide();
@@ -51,8 +51,8 @@ var animate = window.requestAnimationFrame ||
     };
 
 var canvas = document.createElement('canvas');
-var width = window.innerWidth - 150;
-var height = window.innerHeight - 150;
+var width = 800;
+var height = 600;
 canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
@@ -99,9 +99,9 @@ var step = function () { // variable STEP
 
 var player1 = new Player1(); // Nuevo jugador
 var player2 = new Player2(); // Nueva IA
-var line = new GameLine(0, width / 2, 15, height);
-var score1 = new GameScoreP1(width / 2 - 600, 50);
-var score2 = new GameScoreP2(width - 600, 50);
+var line = new GameLine(0, width / 2, 3, height);
+var score1 = new GameScoreP1(30, 50);
+var score2 = new GameScoreP2(445, 50);
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
@@ -304,6 +304,10 @@ function Ball(x, y) {
     this.y = y;
     this.velx = -10;
     this.vely = 0;
+    this.top_x = 0;
+    this.top_y = 0;
+    this.bottom_x = 0;
+    this.bottom_y = 0;
     this.radius = 10;
 }
 
@@ -319,40 +323,97 @@ Ball.prototype.update = function (p1, p2) {
     // Ball speed
     this.x += this.velx;
     this.y += this.vely;
-    var top_x = this.x - 10;
-    var top_y = this.y - 10;
-    var bottom_x = this.x + 10;
-    var bottom_y = this.y + 10;
+    this.top_x = this.x - 10;
+    this.top_y = this.y - 10;
+    this.bottom_x = this.x + 10;
+    this.bottom_y = this.y + 10;
+    this.p1 = p1;
+    this.p2 = p2;
 
-    if (this.y - 10 < 0) {
-        this.y = 10;
-        this.vely = -this.vely;
-    } else if (this.y + 10 > height) {
-        this.y = height - 10;
-        this.vely = -this.vely;
-    }
-
-    if (this.x < 0 || this.x > width) { // a point was scored
-        this.velx = 10;
-        this.vely = 0;
-        this.x = width / 2;
-        this.y = height / 2;
-    }
-
-    if (bottom_x < width / 2) {
-        if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
-            // hit the player1's paddle
-            this.vely += (p1.vely / 2);
-            this.velx = 10;
-            this.y += this.vely;
+    if (sessionStorage.getItem('player') === '1') {
+        if (this.y - 10 < 0) {
+            //this.y = 10;
+            //this.vely = -this.vely;
+            socket.emit('ballmove', {'y': 10, 'vely': -this.vely, 'room': sessionStorage.getItem('room')});
+        } else if (this.y + 10 > height) {
+            //this.y = height - 10;
+            //this.vely = -this.vely;
+            socket.emit('ballmove', {'y': height - 10, 'vely': -this.vely, 'room': sessionStorage.getItem('room')});
         }
-    } else {
-        if (top_y < (p2.y + p2.height) && bottom_y > p2.y && top_x < (p2.x + p2.width) && bottom_x > p2.x) {
-            // hit the player2's paddle
-            this.vely += (p2.vely / 2);
-            this.velx = -10;
-            this.y += this.vely;
+
+        if (this.x < 0 || this.x > width) { // a point was scored
+            //this.velx = 10;
+            //this.vely = 0;
+            //this.x = width / 2;
+            //this.y = height / 2;
+            socket.emit('ballmove', {
+                'velx': 10,
+                'vely': 0,
+                'x': width / 2,
+                'y': height / 2,
+                'room': sessionStorage.getItem('room')
+            })
+        }
+
+        if (this.bottom_x < width / 2) {
+            if (this.top_y < (this.p1.y + this.p1.height) && this.bottom_y > this.p1.y && this.top_x < (this.p1.x + this.p1.width) && this.bottom_x > this.p1.x) {
+                // hit the player1's paddle
+                this.vely += (this.p1.vely / 2);
+                this.velx = 10;
+                this.y += this.vely;
+                // socket.emit('ballmove', {
+                //     'velx': 10,
+                //     'vely': this.vely + (this.p1.vely / 2),
+                //     'y': this.y + this.vely,
+                //     'room': sessionStorage.getItem('room')
+                // })
+            }
+        } else {
+            if (this.top_y < (this.p2.y + this.p2.height) && this.bottom_y > this.p2.y && this.top_x < (this.p2.x + this.p2.width) && this.bottom_x > this.p2.x) {
+                // hit the player2's paddle
+                this.vely += (this.p2.vely / 2);
+                this.velx = -10;
+                this.y += this.vely;
+                // socket.emit('ballmove', {
+                //     'velx': -10,
+                //     'vely': this.vely + (this.p2.vely / 2),
+                //     'y': this.y + this.vely,
+                //     'room': sessionStorage.getItem('room')
+                // })
+            }
         }
     }
 };
+
+socket.on('ballmove', function (text) {
+    elTextoComoJSON = JSON.parse(text);
+    if (ball.y - 10 < 0) {
+        ball.y = elTextoComoJSON['y'];
+        ball.vely = elTextoComoJSON['vely'];
+    } else if (ball.y + 10 > height) {
+        ball.y = elTextoComoJSON['y'];
+        ball.vely = elTextoComoJSON['vely'];
+    }
+
+    if (ball.x < 0 || ball.x > width) { // a point was scored
+        ball.velx = elTextoComoJSON['velx'];
+        ball.vely = elTextoComoJSON['vely'];
+        ball.x = elTextoComoJSON['x'];
+        ball.y = elTextoComoJSON['y'];
+    }
+
+    // if (ball.bottom_x < width / 2) {
+    //     if (ball.top_y < (ball.p1.y + ball.p1.height) && ball.bottom_y > ball.p1.y && ball.top_x < (ball.p1.x + ball.p1.width) && ball.bottom_x > ball.p1.x) {
+    //         ball.vely = elTextoComoJSON['vely'];
+    //         ball.velx = elTextoComoJSON['velx'];
+    //         ball.y = elTextoComoJSON['y'];
+    //     }
+    // } else {
+    //     if (ball.top_y < (ball.p2.y + ball.p2.height) && ball.bottom_y > ball.p2.y && ball.top_x < (ball.p2.x + ball.p2.width) && ball.bottom_x > ball.p2.x) {
+    //         ball.vely = elTextoComoJSON['vely'];
+    //         ball.velx = elTextoComoJSON['velx'];
+    //         ball.y = elTextoComoJSON['y'];
+    //     }
+    // }
+});
 /* ************************** BALL ENDS ************************ */

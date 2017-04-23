@@ -220,6 +220,15 @@ def on_leave(data):
     socketio.send(elUsuario + ' has left the room.', room=laSala)
 
 
+@socketio.on('ballmove')
+def ball_movement(ball):
+    print(ball)
+    laSala = ball['room']
+    laBola = json.dumps(ball)
+    socketio.emit('ballmove', laBola, room=laSala)
+
+
+
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
 # SE OBTIENE DE AHI; SINO SE REVISA LOS CREDENCIALES DEL HEADER, SE DECODIFICAN, Y SE OBTIENE EL
 # USUARIO. EN CASO DE QUE NO HUBIERAN CREDENCIALES, SE LE ASIGNA LA DIRECCION IP AL USUARIO.
