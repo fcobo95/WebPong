@@ -358,28 +358,28 @@ Ball.prototype.update = function (p1, p2) {
         if (this.bottom_x < width / 2) {
             if (this.top_y < (this.p1.y + this.p1.height) && this.bottom_y > this.p1.y && this.top_x < (this.p1.x + this.p1.width) && this.bottom_x > this.p1.x) {
                 // hit the player1's paddle
-                this.vely += (this.p1.vely / 2);
-                this.velx = 10;
-                this.y += this.vely;
-                // socket.emit('ballmove', {
-                //     'velx': 10,
-                //     'vely': this.vely + (this.p1.vely / 2),
-                //     'y': this.y + this.vely,
-                //     'room': sessionStorage.getItem('room')
-                // })
+                // this.vely += (this.p1.vely / 2);
+                // this.velx = 10;
+                // this.y += this.vely;
+                socket.emit('ballmove', {
+                    'velx': 10,
+                    'vely': this.vely + (this.p1.vely / 2),
+                    'y': this.y + this.vely,
+                    'room': sessionStorage.getItem('room')
+                })
             }
         } else {
             if (this.top_y < (this.p2.y + this.p2.height) && this.bottom_y > this.p2.y && this.top_x < (this.p2.x + this.p2.width) && this.bottom_x > this.p2.x) {
                 // hit the player2's paddle
-                this.vely += (this.p2.vely / 2);
-                this.velx = -10;
-                this.y += this.vely;
-                // socket.emit('ballmove', {
-                //     'velx': -10,
-                //     'vely': this.vely + (this.p2.vely / 2),
-                //     'y': this.y + this.vely,
-                //     'room': sessionStorage.getItem('room')
-                // })
+                // this.vely += (this.p2.vely / 2);
+                // this.velx = -10;
+                // this.y += this.vely;
+                socket.emit('ballmove', {
+                    'velx': -10,
+                    'vely': this.vely + (this.p2.vely / 2),
+                    'y': this.y + this.vely,
+                    'room': sessionStorage.getItem('room')
+                })
             }
         }
     }
@@ -402,18 +402,19 @@ socket.on('ballmove', function (text) {
         ball.y = elTextoComoJSON['y'];
     }
 
-    // if (ball.bottom_x < width / 2) {
-    //     if (ball.top_y < (ball.p1.y + ball.p1.height) && ball.bottom_y > ball.p1.y && ball.top_x < (ball.p1.x + ball.p1.width) && ball.bottom_x > ball.p1.x) {
-    //         ball.vely = elTextoComoJSON['vely'];
-    //         ball.velx = elTextoComoJSON['velx'];
-    //         ball.y = elTextoComoJSON['y'];
-    //     }
-    // } else {
-    //     if (ball.top_y < (ball.p2.y + ball.p2.height) && ball.bottom_y > ball.p2.y && ball.top_x < (ball.p2.x + ball.p2.width) && ball.bottom_x > ball.p2.x) {
-    //         ball.vely = elTextoComoJSON['vely'];
-    //         ball.velx = elTextoComoJSON['velx'];
-    //         ball.y = elTextoComoJSON['y'];
-    //     }
-    // }
+    if (ball.bottom_x < width / 2) {
+        if (ball.top_y < (ball.p1.y + ball.p1.height) && ball.bottom_y > ball.p1.y && ball.top_x < (ball.p1.x + ball.p1.width) && ball.bottom_x > ball.p1.x) {
+            ball.vely = elTextoComoJSON['vely'];
+            ball.velx = elTextoComoJSON['velx'];
+            ball.y = elTextoComoJSON['y'];
+        }
+    }
+    else {
+        if (ball.top_y < (ball.p2.y + ball.p2.height) && ball.bottom_y > ball.p2.y && ball.top_x < (ball.p2.x + ball.p2.width) && ball.bottom_x > ball.p2.x) {
+            ball.vely = elTextoComoJSON['vely'];
+            ball.velx = elTextoComoJSON['velx'];
+            ball.y = elTextoComoJSON['y'];
+        }
+    }
 });
 /* ************************** BALL ENDS ************************ */
