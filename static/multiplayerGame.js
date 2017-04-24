@@ -81,19 +81,6 @@ window.addEventListener("keydown", function (event) {
     keysDownP2[event.keyCode] = true;
 });
 
-var number_for_score = [
-    '111101101101111', // 0
-    '010010010010010', // 1
-    '111001111100111', // 2
-    '111001111001111', // 3
-    '101101111001001', // 4
-    '111100111001111', // 5
-    '111100111101111', // 6
-    '111001001001001', // 7
-    '111101111101111', // 8
-    '111101111001001'  // 9
-];
-
 var step = function () { // variable STEP
     update();
     render();
@@ -232,10 +219,8 @@ Player1.prototype.update = function () {
             var value = Number(key);
             if (value === 87) { // W
                 socket.emit('keypress', {key: 87, player: 1, room: sessionStorage.getItem('room')});
-                //this.paddle.move(0, -15);
             } else if (value === 83) { // S
                 socket.emit('keypress', {key: 83, player: 1, room: sessionStorage.getItem('room')});
-                //this.paddle.move(0, 15);
             } else {
                 this.paddle.move(0, 0);
             }
@@ -266,10 +251,8 @@ Player2.prototype.update = function () {
             var value = Number(key);
             if (value === 87) { // UP
                 socket.emit('keypress', {key: 87, player: 2, room: sessionStorage.getItem('room')});
-                //this.paddle.move(0, -15);
             } else if (value === 83) { // DOWN
                 socket.emit('keypress', {key: 83, player: 2, room: sessionStorage.getItem('room')});
-                //this.paddle.move(0, 15);
             } else {
                 this.paddle.move(0, 0);
             }
@@ -326,37 +309,37 @@ Ball.prototype.render = function () {
 
 Ball.prototype.update = function (p1, p2) {
     // Ball speed
-    this.x += this.velx;
-    this.y += this.vely;
-    this.top_x = this.x - 10;
-    this.top_y = this.y - 10;
-    this.bottom_x = this.x + 10;
-    this.bottom_y = this.y + 10;
-    this.p1 = p1;
-    this.p2 = p2;
+    if (sessionStorage.getItem('room') !== null) {
+        this.x += this.velx;
+        this.y += this.vely;
+        this.top_x = this.x - 10;
+        this.top_y = this.y - 10;
+        this.bottom_x = this.x + 10;
+        this.bottom_y = this.y + 10;
+        this.p1 = p1;
+        this.p2 = p2;
+    }
 
     if (sessionStorage.getItem('player') === '1') {
         if (this.y - 10 < 0) {
-            //this.y = 10;
-            //this.vely = -this.vely;
-            socket.emit('ballmove', {'y': 10, 'vely': -this.vely, 'room': sessionStorage.getItem('room')});
+            socket.emit('ballmove', {
+                'y': 10,
+                'vely': -this.vely,
+                'room': sessionStorage.getItem('room')
+            });
         } else if (this.y + 10 > height) {
-            //this.y = height - 10;
-            //this.vely = -this.vely;
-            socket.emit('ballmove', {'y': height - 10, 'vely': -this.vely, 'room': sessionStorage.getItem('room')});
+            socket.emit('ballmove', {
+                'y': height - 10,
+                'vely': -this.vely,
+                'room': sessionStorage.getItem('room')
+            });
         }
 
         if (this.x < 0 || this.x > width) { // a point was scored
-            //this.velx = 10;
-            //this.vely = 0;
-            //this.x = width / 2;
-            //this.y = height / 2;
             if (ball.x < 0) {
                 p2Score++;
-                score2.render(p2Score);
             } else if (ball.x > width) {
                 p1Score++;
-                score1.render(p1Score);
             }
             socket.emit('ballmove', {
                 'velx': 10,
@@ -369,10 +352,7 @@ Ball.prototype.update = function (p1, p2) {
 
         if (this.bottom_x < width / 2) {
             if (this.top_y < (this.p1.y + this.p1.height) && this.bottom_y > this.p1.y && this.top_x < (this.p1.x + this.p1.width) && this.bottom_x > this.p1.x) {
-                // hit the player1's paddle
-                // this.vely += (this.p1.vely / 2);
-                // this.velx = 10;
-                // this.y += this.vely;
+                // hit the player1's paddle;
                 socket.emit('ballmove', {
                     'velx': 10,
                     'vely': this.vely + (this.p1.vely / 2),
@@ -383,9 +363,6 @@ Ball.prototype.update = function (p1, p2) {
         } else {
             if (this.top_y < (this.p2.y + this.p2.height) && this.bottom_y > this.p2.y && this.top_x < (this.p2.x + this.p2.width) && this.bottom_x > this.p2.x) {
                 // hit the player2's paddle
-                // this.vely += (this.p2.vely / 2);
-                // this.velx = -10;
-                // this.y += this.vely;
                 socket.emit('ballmove', {
                     'velx': -10,
                     'vely': this.vely + (this.p2.vely / 2),
@@ -408,7 +385,7 @@ socket.on('ballmove', function (text) {
     }
 
     if (ball.x < 0 || ball.x > width) {
-        alert('Gol.')// a point was scored
+        // a point was scored
         // if (ball.x < 0){
         //     p2Score++;
         //     score2.render(p2Score);
