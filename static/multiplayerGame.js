@@ -319,17 +319,19 @@ Ball.prototype.update = function (p1, p2) {
         this.p1 = p1;
         this.p2 = p2;
     }
+    if (sessionStorage.getItem('room') !== null) {
 
-    if (sessionStorage.getItem('player') === '1') {
         if (this.y - 10 < 0) {
             socket.emit('ballmove', {
                 'y': 10,
+                'x': this.x + this.velx,
                 'vely': -this.vely,
                 'room': sessionStorage.getItem('room')
             });
         } else if (this.y + 10 > height) {
             socket.emit('ballmove', {
                 'y': height - 10,
+                'x': this.x + this.velx,
                 'vely': -this.vely,
                 'room': sessionStorage.getItem('room')
             });
@@ -357,6 +359,7 @@ Ball.prototype.update = function (p1, p2) {
                     'velx': 10,
                     'vely': this.vely + (this.p1.vely / 2),
                     'y': this.y + this.vely,
+                    'x': this.x,
                     'room': sessionStorage.getItem('room')
                 })
             }
@@ -367,6 +370,7 @@ Ball.prototype.update = function (p1, p2) {
                     'velx': -10,
                     'vely': this.vely + (this.p2.vely / 2),
                     'y': this.y + this.vely,
+                    'x': this.x,
                     'room': sessionStorage.getItem('room')
                 })
             }
@@ -378,9 +382,11 @@ socket.on('ballmove', function (text) {
     elTextoComoJSON = JSON.parse(text);
     if (ball.y - 10 < 0) {
         ball.y = elTextoComoJSON['y'];
+        ball.x = elTextoComoJSON['x'];
         ball.vely = elTextoComoJSON['vely'];
     } else if (ball.y + 10 > height) {
         ball.y = elTextoComoJSON['y'];
+        ball.x = elTextoComoJSON['x'];
         ball.vely = elTextoComoJSON['vely'];
     }
 
@@ -405,6 +411,7 @@ socket.on('ballmove', function (text) {
             ball.vely = elTextoComoJSON['vely'];
             ball.velx = elTextoComoJSON['velx'];
             ball.y = elTextoComoJSON['y'];
+            ball.x = elTextoComoJSON['x']
         }
     }
     else {
@@ -412,6 +419,7 @@ socket.on('ballmove', function (text) {
             ball.vely = elTextoComoJSON['vely'];
             ball.velx = elTextoComoJSON['velx'];
             ball.y = elTextoComoJSON['y'];
+            ball.x = elTextoComoJSON['x']
         }
     }
 });
