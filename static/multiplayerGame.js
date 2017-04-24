@@ -1,6 +1,6 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 function joinRoom() {
-    socket.emit('join', {room: sessionStorage.getItem('room')});
+    socket.emit('join');
     $('#botones-salas').hide();
     $('#iniciar').show();
     $('#salir').show();
@@ -8,16 +8,17 @@ function joinRoom() {
 }
 
 socket.on('join', function (text) {
-    var elJugadorActual = sessionStorage.getItem('player');
+    sessionStorage.setItem('room', text['room']);
     var laSalaActual = sessionStorage.getItem('room');
+    var elJugadorActual = sessionStorage.getItem('player');
     if (elJugadorActual === null && laSalaActual !== null) {
-        if (text === '1') {
+        if (text['player'] === '1') {
             sessionStorage.setItem('player', '1');
-        } else if (text === '2') {
+        } else if (text['player'] === '2') {
             sessionStorage.setItem('player', '2');
         }
     } else if (elJugadorActual === '2') {
-        if (text === '1') {
+        if (text['player'] === '1') {
             sessionStorage.setItem('player', '1');
         }
     }
@@ -43,6 +44,11 @@ function leaveRoom() {
     $('#salir').hide();
     $('#chat').hide();
 }
+
+socket.on('kick', function () {
+    leaveRoom();
+    alert("El otro jugador ha abandonado la partida.")
+});
 
 
 /* ********************* CANVAS SETUP BEGINS ********************* */

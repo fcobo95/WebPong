@@ -171,9 +171,11 @@ def on_join(message):
             if laBusqueda is None:
                 localDatabase.Salas.insert_one({'_id': cadaSala, 'Usuario1': losUsuarios[0][1], 'Usuario2': losUsuarios[1][1]})
                 join_room(cadaSala, elSID1)
-                socketio.emit('join', '1', skip_sid=elSID2)
+                laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
+                socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
-                socketio.emit('join', '2', skip_sid=elSID1)
+                laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
+                socketio.emit('join', laRespuesta2, skip_sid=elSID1)
                 break
         losUsuarios.clear()
 
@@ -223,6 +225,25 @@ def keypress(keypress):
 
 
 @socketio.on('leave')
+def on_leave(data):
+    elUsuario = definaElUsuario()
+    laSala = data['room']
+    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
+    if laBusqueda['Usuario1'] == elUsuario:
+        elOtroUsuario = laBusqueda['Usuario2']
+        if elOtroUsuario != "":
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario1': elOtroUsuario}})
+            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
+            socketio.emit('join', '1')
+        else:
+            localDatabase.Salas.remove({'_id': laSala})
+    elif laBusqueda['Usuario2'] == elUsuario:
+        localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
+    leave_room(laSala)
+    print(elUsuario + " has left the room.")
+    socketio.send(elUsuario + ' has left the room.', room=laSala)
+
+@socketio.on('leave2')
 def on_leave(data):
     elUsuario = definaElUsuario()
     laSala = data['room']
