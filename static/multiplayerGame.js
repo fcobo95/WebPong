@@ -319,7 +319,7 @@ Ball.prototype.update = function (p1, p2) {
         this.p1 = p1;
         this.p2 = p2;
     }
-    if (sessionStorage.getItem('room') !== null) {
+    if (sessionStorage.getItem('player') !== null) {
 
         if (this.y - 10 < 0) {
             socket.emit('ballmove', {

@@ -20,6 +20,8 @@ socketio = SocketIO(app)
 with app.app_context():
     clienteLocal = MongoClient('localhost', 27017)
     localDatabase = clienteLocal.MongoLocal
+    losUsuarios = []
+    lasSalas = ['A', 'B', 'C', 'D', 'E']
 
 
 # ESTE METODO VERIFICA QUE EL USUARIO SEA VALIDO, AL RECIBIR DOS PARAMETROS. PRIMERO REVISA SI
@@ -69,7 +71,7 @@ def index():
 def soloGame():
     return render_template('Soloplayer.html')
 
-
+# TODO: AGREGAR AUTENTICACION
 @app.route('/multiplayer')
 def multiplayerGame():
     return render_template('Multiplayer.html')
@@ -152,10 +154,30 @@ def checkRoom():
 
 @socketio.on('connect')
 def connected():
-    print('Connected.')
+    print('Connected: ' + request.sid)
 
 
 @socketio.on('join')
+def on_join(message):
+    elSocketID = request.sid
+    elUsuario = definaElUsuario()
+    if len(losUsuarios) < 2:
+        losUsuarios.append([elSocketID, elUsuario])
+    if len(losUsuarios) == 2:
+        elSID1 = losUsuarios[0][0]
+        elSID2 = losUsuarios[1][0]
+        for cadaSala in lasSalas:
+            laBusqueda = localDatabase.Salas.find_one({'_id': cadaSala})
+            if laBusqueda is None:
+                localDatabase.Salas.insert_one({'_id': cadaSala, 'Usuario1': losUsuarios[0][1], 'Usuario2': losUsuarios[1][1]})
+                join_room(cadaSala, elSID1)
+                socketio.emit('join', '1', skip_sid=elSID2)
+                join_room(cadaSala, elSID2)
+                socketio.emit('join', '2', skip_sid=elSID1)
+                break
+        losUsuarios.clear()
+
+@socketio.on('join2')
 def on_join(message):
     elUsuario = definaElUsuario()
     laSala = message['room']
