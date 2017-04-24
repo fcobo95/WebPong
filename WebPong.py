@@ -158,7 +158,7 @@ def connected():
 
 
 @socketio.on('join')
-def on_join(message):
+def on_join():
     elSocketID = request.sid
     elUsuario = definaElUsuario()
     if len(losUsuarios) < 2:
@@ -176,6 +176,8 @@ def on_join(message):
                 join_room(cadaSala, elSID2)
                 laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
                 socketio.emit('join', laRespuesta2, skip_sid=elSID1)
+                socketio.emit('message', losUsuarios[0][1] + 'has joined the game.', room=cadaSala)
+                socketio.emit('message', losUsuarios[1][1] + 'has joined the game.', room=cadaSala)
                 break
         losUsuarios.clear()
 
@@ -229,19 +231,13 @@ def on_leave(data):
     elUsuario = definaElUsuario()
     laSala = data['room']
     laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
-    if laBusqueda['Usuario1'] == elUsuario:
-        elOtroUsuario = laBusqueda['Usuario2']
-        if elOtroUsuario != "":
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario1': elOtroUsuario}})
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
-            socketio.emit('join', '1')
-        else:
-            localDatabase.Salas.remove({'_id': laSala})
-    elif laBusqueda['Usuario2'] == elUsuario:
-        localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
+    if laBusqueda is not None:
+        localDatabase.Salas.remove({'_id': laSala})
+        socketio.emit('kick', room=laSala)
     leave_room(laSala)
     print(elUsuario + " has left the room.")
     socketio.send(elUsuario + ' has left the room.', room=laSala)
+
 
 @socketio.on('leave2')
 def on_leave(data):

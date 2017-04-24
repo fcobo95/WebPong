@@ -8,17 +8,18 @@ function joinRoom() {
 }
 
 socket.on('join', function (text) {
-    sessionStorage.setItem('room', text['room']);
+    var elTextoComoJSON = JSON.parse(text);
+    sessionStorage.setItem('room', elTextoComoJSON['room']);
     var laSalaActual = sessionStorage.getItem('room');
     var elJugadorActual = sessionStorage.getItem('player');
     if (elJugadorActual === null && laSalaActual !== null) {
-        if (text['player'] === '1') {
+        if (elTextoComoJSON['player'] === '1') {
             sessionStorage.setItem('player', '1');
-        } else if (text['player'] === '2') {
+        } else if (elTextoComoJSON['player'] === '2') {
             sessionStorage.setItem('player', '2');
         }
     } else if (elJugadorActual === '2') {
-        if (text['player'] === '1') {
+        if (elTextoComoJSON['player'] === '1') {
             sessionStorage.setItem('player', '1');
         }
     }
