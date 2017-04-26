@@ -158,6 +158,35 @@ def checkRoom():
             return 'False'
 
 
+@app.route('/api/save-player', methods=['POST'])
+def savePlayer():
+    laInformacion = request.json
+    elJugador = laInformacion['jugador']
+    elPuntaje = laInformacion['puntaje']
+    laBusqueda = localDatabase.Ranking.find_one({'_id': elJugador})
+    if laBusqueda is None:
+        localDatabase.Ranking.insert_one({'_id': elJugador, 'Puntaje': elPuntaje})
+        print("New player saved.")
+    else:
+        elAntiguoPuntaje = int(laBusqueda['Puntaje'])
+        if elPuntaje > elAntiguoPuntaje:
+            localDatabase.Ranking.update({'_id': elJugador}, {'$set': {'Puntaje': elPuntaje}})
+            print("Player updated.")
+    return "True"
+
+
+@app.route('/api/show-ranking', methods=['GET'])
+def showRanking():
+    elTop10 = localDatabase.Ranking.find().sort('Puntaje', -1).limit(10)
+    laRespuesta = {}
+    laPosicion = 1
+    for cadaJugador in elTop10:
+        laRespuesta['Jugador' + str(laPosicion)] = cadaJugador['Puntaje']
+        laPosicion += 1
+    laRespuestaComoJSON = json.dumps(laRespuesta)
+    return Response(laRespuestaComoJSON, 200, mimetype='application/json')
+
+
 @socketio.on('connect')
 def connected():
     print('Connected: ' + request.sid)
@@ -300,6 +329,7 @@ def on_leave(data):
     socketio.send(elUsuario + ' has left the room.', room=laSala)
 
 
+# TODO: BORRAR ESTE METODO
 @socketio.on('leave2')
 def on_leave(data):
     elUsuario = definaElUsuario()
@@ -320,6 +350,7 @@ def on_leave(data):
     socketio.send(elUsuario + ' has left the room.', room=laSala)
 
 
+# TODO: BORRAR SI NO SE UTILIZA
 @socketio.on('ballmove')
 def ball_movement(ball):
     print(ball)
