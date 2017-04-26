@@ -20,8 +20,12 @@ socketio = SocketIO(app)
 with app.app_context():
     clienteLocal = MongoClient('localhost', 27017)
     localDatabase = clienteLocal.MongoLocal
-    losUsuarios = []
-    lasSalas = ['A', 'B', 'C', 'D', 'E']
+    laColaModo23 = []
+    laColaModo35 = []
+    laColaModo47 = []
+    lasSalas23 = ['A', 'B', 'C', 'D', 'E']
+    lasSalas35 = ['F', 'G', 'H', 'I', 'J']
+    lasSalas47 = ['K', 'L', 'M', 'N', 'O']
 
 
 # ESTE METODO VERIFICA QUE EL USUARIO SEA VALIDO, AL RECIBIR DOS PARAMETROS. PRIMERO REVISA SI
@@ -70,6 +74,7 @@ def index():
 @app.route('/solo')
 def soloGame():
     return render_template('Soloplayer.html')
+
 
 # TODO: AGREGAR AUTENTICACION
 @app.route('/multiplayer')
@@ -138,6 +143,7 @@ def obtengaToken():
         return formateeElError(e)
 
 
+# TODO: BORRAR ESTE METODO O VER SI SE USA EN ALGUN LADO
 @app.route('/api/check-room', methods=['POST'])
 def checkRoom():
     laInformacion = request.json
@@ -157,30 +163,85 @@ def connected():
     print('Connected: ' + request.sid)
 
 
-@socketio.on('join')
-def on_join():
+@socketio.on('join-2/3')
+def on_join_23():
     elSocketID = request.sid
     elUsuario = definaElUsuario()
-    if len(losUsuarios) < 2:
-        losUsuarios.append([elSocketID, elUsuario])
-    if len(losUsuarios) == 2:
-        elSID1 = losUsuarios[0][0]
-        elSID2 = losUsuarios[1][0]
-        for cadaSala in lasSalas:
+    if len(laColaModo23) < 2:
+        laColaModo23.append([elSocketID, elUsuario])
+    if len(laColaModo23) == 2:
+        elSID1 = laColaModo23[0][0]
+        elSID2 = laColaModo23[1][0]
+        for cadaSala in lasSalas23:
             laBusqueda = localDatabase.Salas.find_one({'_id': cadaSala})
             if laBusqueda is None:
-                localDatabase.Salas.insert_one({'_id': cadaSala, 'Usuario1': losUsuarios[0][1], 'Usuario2': losUsuarios[1][1]})
+                localDatabase.Salas.insert_one(
+                    {'_id': cadaSala, 'Usuario1': laColaModo23[0][1], 'Usuario2': laColaModo23[1][1]})
                 join_room(cadaSala, elSID1)
                 laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
                 socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
                 laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
                 socketio.emit('join', laRespuesta2, skip_sid=elSID1)
-                socketio.emit('message', losUsuarios[0][1] + 'has joined the game.', room=cadaSala)
-                socketio.emit('message', losUsuarios[1][1] + 'has joined the game.', room=cadaSala)
+                socketio.emit('message', laColaModo23[0][1] + 'has joined the game.', room=cadaSala)
+                socketio.emit('message', laColaModo23[1][1] + 'has joined the game.', room=cadaSala)
                 break
-        losUsuarios.clear()
+        laColaModo23.clear()
 
+
+@socketio.on('join-3/5')
+def on_join_35():
+    elSocketID = request.sid
+    elUsuario = definaElUsuario()
+    if len(laColaModo35) < 2:
+        laColaModo35.append([elSocketID, elUsuario])
+    if len(laColaModo35) == 2:
+        elSID1 = laColaModo35[0][0]
+        elSID2 = laColaModo35[1][0]
+        for cadaSala in lasSalas35:
+            laBusqueda = localDatabase.Salas.find_one({'_id': cadaSala})
+            if laBusqueda is None:
+                localDatabase.Salas.insert_one(
+                    {'_id': cadaSala, 'Usuario1': laColaModo35[0][1], 'Usuario2': laColaModo35[1][1]})
+                join_room(cadaSala, elSID1)
+                laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
+                socketio.emit('join', laRespuesta1, skip_sid=elSID2)
+                join_room(cadaSala, elSID2)
+                laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
+                socketio.emit('join', laRespuesta2, skip_sid=elSID1)
+                socketio.emit('message', laColaModo35[0][1] + 'has joined the game.', room=cadaSala)
+                socketio.emit('message', laColaModo35[1][1] + 'has joined the game.', room=cadaSala)
+                break
+        laColaModo35.clear()
+
+
+@socketio.on('join-4/7')
+def on_join_47():
+    elSocketID = request.sid
+    elUsuario = definaElUsuario()
+    if len(laColaModo47) < 2:
+        laColaModo47.append([elSocketID, elUsuario])
+    if len(laColaModo47) == 2:
+        elSID1 = laColaModo47[0][0]
+        elSID2 = laColaModo47[1][0]
+        for cadaSala in lasSalas47:
+            laBusqueda = localDatabase.Salas.find_one({'_id': cadaSala})
+            if laBusqueda is None:
+                localDatabase.Salas.insert_one(
+                    {'_id': cadaSala, 'Usuario1': laColaModo47[0][1], 'Usuario2': laColaModo47[1][1]})
+                join_room(cadaSala, elSID1)
+                laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
+                socketio.emit('join', laRespuesta1, skip_sid=elSID2)
+                join_room(cadaSala, elSID2)
+                laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
+                socketio.emit('join', laRespuesta2, skip_sid=elSID1)
+                socketio.emit('message', laColaModo47[0][1] + 'has joined the game.', room=cadaSala)
+                socketio.emit('message', laColaModo47[1][1] + 'has joined the game.', room=cadaSala)
+                break
+        laColaModo47.clear()
+
+
+# TODO: BORRAR ESTE METODO
 @socketio.on('join2')
 def on_join(message):
     elUsuario = definaElUsuario()
@@ -265,7 +326,6 @@ def ball_movement(ball):
     laSala = ball['room']
     laBola = json.dumps(ball)
     socketio.emit('ballmove', laBola, room=laSala)
-
 
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,

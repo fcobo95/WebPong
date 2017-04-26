@@ -1,6 +1,12 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 function joinRoom() {
-    socket.emit('join');
+    if (sessionStorage.getItem('gameMode') === '2/3') {
+        socket.emit('join-2/3');
+    } else if (sessionStorage.getItem('gameMode') === '3/5') {
+        socket.emit('join-3/5');
+    } else if (sessionStorage.getItem('gameMode') === '4/7') {
+        socket.emit('join-4/7');
+    }
     $('#botones-salas').hide();
     $('#iniciar').show();
     $('#salir').show();

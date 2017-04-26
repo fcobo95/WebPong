@@ -81,15 +81,18 @@
 <div class="container-fluid">
     <div class="col-md-6" id="botones-salas">
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom();">Modo 2/3
+            <button class="btn btn-primary game-button"
+                    onclick="sessionStorage.setItem('gameMode', '2/3'); joinRoom();">Modo 2/3
             </button>
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom();">Modo 3/5
+            <button class="btn btn-primary game-button"
+                    onclick="sessionStorage.setItem('gameMode', '3/5'); joinRoom();">Modo 3/5
             </button>
         </div>
         <div class="col-md-3">
-            <button class="btn btn-primary game-button" onclick="joinRoom();">Modo 4/7
+            <button class="btn btn-primary game-button"
+                    onclick="sessionStorage.setItem('gameMode', '4/7'); joinRoom();">Modo 4/7
             </button>
         </div>
     </div>
