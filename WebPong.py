@@ -64,20 +64,20 @@ def signup():
     return render_template('signup.html')
 
 
-@auth.login_required
 @app.route('/index')
+@auth.login_required
 def index():
     return render_template('index.html')
 
 
-@auth.login_required
 @app.route('/solo')
+@auth.login_required
 def soloGame():
     return render_template('Soloplayer.html')
 
 
-@auth.login_required
 @app.route('/multiplayer')
+@auth.login_required
 def multiplayerGame():
     return render_template('Multiplayer.html')
 

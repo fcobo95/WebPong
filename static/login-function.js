@@ -25,13 +25,13 @@ function login_function() {
                 "authorization": "Basic " + btoa(username + ":" + password)
             },
             success: function (response) {
-                console.log(response)
+                console.log(response);
                 alert("Welcome, " + username + "!");
-                sessionStorage.setItem("Token", response['Token'])
+                sessionStorage.setItem("Token", response['Token']);
                 window.location.href = "/index";
             },
             error: function (response) {
-                console.log(response)
+                console.log(response);
                 alert("Error: " + response['statusText'])
             }
         });
