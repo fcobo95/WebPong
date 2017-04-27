@@ -181,7 +181,7 @@ def showRanking():
     laRespuesta = {}
     laPosicion = 1
     for cadaJugador in elTop10:
-        laRespuesta['Jugador' + str(laPosicion)] = cadaJugador['Puntaje']
+        laRespuesta['Jugador' + str(laPosicion)] = {"Jugador": cadaJugador['_id'], "Puntaje":cadaJugador['Puntaje']}
         laPosicion += 1
     laRespuestaComoJSON = json.dumps(laRespuesta)
     return Response(laRespuestaComoJSON, 200, mimetype='application/json')

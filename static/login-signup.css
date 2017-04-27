@@ -101,3 +101,20 @@ span.psw {
     width: 50%;
     margin: 0 auto;
 }
+
+table, th, td {
+    border: 2px solid white;
+    color: white;
+    font-size: 16pt;
+    font-family: "Times New Roman", Georgia, Serif;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#top10 {
+    color: white;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    margin-top: 100px;
+}
