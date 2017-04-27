@@ -64,19 +64,19 @@ def signup():
     return render_template('signup.html')
 
 
-# TODO: AGREGAR AUTENTICACION
+@auth.login_required
 @app.route('/index')
 def index():
     return render_template('index.html')
 
 
-# TODO: AGREGAR AUTENTICACION
+@auth.login_required
 @app.route('/solo')
 def soloGame():
     return render_template('Soloplayer.html')
 
 
-# TODO: AGREGAR AUTENTICACION
+@auth.login_required
 @app.route('/multiplayer')
 def multiplayerGame():
     return render_template('Multiplayer.html')
@@ -181,7 +181,7 @@ def showRanking():
     laRespuesta = {}
     laPosicion = 1
     for cadaJugador in elTop10:
-        laRespuesta['Jugador' + str(laPosicion)] = {"Jugador": cadaJugador['_id'], "Puntaje":cadaJugador['Puntaje']}
+        laRespuesta['Jugador' + str(laPosicion)] = {"Jugador": cadaJugador['_id'], "Puntaje": cadaJugador['Puntaje']}
         laPosicion += 1
     laRespuestaComoJSON = json.dumps(laRespuesta)
     return Response(laRespuestaComoJSON, 200, mimetype='application/json')

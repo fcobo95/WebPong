@@ -29,19 +29,6 @@ window.addEventListener("keydown", function (event) {
     keysDown[event.keyCode] = true;
 });
 
-var number_for_score = [
-    '111101101101111', // 0
-    '010010010010010', // 1
-    '111001111100111', // 2
-    '111001111001111', // 3
-    '101101111001001', // 4
-    '111100111001111', // 5
-    '111100111101111', // 6
-    '111001001001001', // 7
-    '111101111101111', // 8
-    '111101111001001'  // 9
-];
-
 var step = function () { // variable STEP
     update();
     render();
@@ -74,6 +61,7 @@ var update = function () { // variable UPDATE
 };
 
 /* ********************* CANVAS SETUP ENDS ********************* */
+
 
 /* ********************* GAMELINE BEGINS *********************** */
 function GameLine(x, y, width, height) {
@@ -119,6 +107,7 @@ GameScorePC.prototype.render = function () {
 };
 /* ********************** GAMESCORE ENDS *********************** */
 
+
 /* ************************ PADDLES BEGIN ********************** */
 // Esta es como la clase constructura de PADDLE
 function Paddle(x, y, width, height) {
@@ -154,7 +143,6 @@ Paddle.prototype.move = function (x, y) {
 };
 /* ************************* PADDLES END *********************** */
 
-/* ************************************************************* */
 
 /* ************************ PLAYER BEGINS ********************** */
 var p1Score = 0;
@@ -162,7 +150,7 @@ var p1Score = 0;
 function Player() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
     // Args = (x, y, weigth, height)
-    this.paddle = new Paddle(width - (width - 20), (height / 2) - 100, 20, 200);
+    this.paddle = new Paddle(width - (width - 20), (height / 2) - 50, 20, 100);
 }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
@@ -173,10 +161,10 @@ Player.prototype.render = function () {
 Player.prototype.update = function () {
     for (var key in keysDown) {
         var value = Number(key);
-        if (value === 38) { // left arrow
-            this.paddle.move(0, -10);
-        } else if (value === 40) { // right arrow
-            this.paddle.move(0, 10);
+        if (value === 87) { // left arrow
+            this.paddle.move(0, -15);
+        } else if (value === 83) { // right arrow
+            this.paddle.move(0, 15);
         } else {
             this.paddle.move(0, 0);
         }
@@ -184,7 +172,6 @@ Player.prototype.update = function () {
 };
 /* ************************* PLAYER ENDS *********************** */
 
-/* ************************************************************* */
 
 /* *********************** COMPUTER BEGINS ********************* */
 var pcScore = 0;
@@ -192,7 +179,7 @@ var pcScore = 0;
 function Computer() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
     // Args = (x, y, weigth, height)
-    this.paddle = new Paddle(width - 40, (height / 2) - 100, 20, 200);
+    this.paddle = new Paddle(width - 40, (height / 2) - 50, 20, 100);
 }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
@@ -201,14 +188,15 @@ Computer.prototype.render = function () {
 };
 
 Computer.prototype.update = function (ball) {
+    var movement = 20;
     var ypos = ball.y;
-    var avante = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
-    if (avante < 0 && avante < -10) {
-        avante = -10;
-    } else if (avante > 0 && avante > 10) {
-        avante = 10;
+    var advance = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
+    if (advance < 0 && advance < -movement) {
+        advance = -movement;
+    } else if (advance > 0 && advance > movement) {
+        advance = movement;
     }
-    this.paddle.move(0, avante);
+    this.paddle.move(0, advance);
     if (this.paddle.y < 0) {
         this.paddle.y = 0;
     } else if (this.paddle.y + this.paddle.height > height) {
@@ -217,14 +205,13 @@ Computer.prototype.update = function (ball) {
 };
 /* ************************ COMPUTER ENDS ********************** */
 
-/* ************************************************************* */
 
 /* ************************* BALL BEGINS *********************** */
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Ball(x, y) {
     this.x = x;
     this.y = y;
-    this.velx = -10;
+    this.velx = -15;
     this.vely = 0;
     this.radius = 10;
 }
@@ -260,6 +247,7 @@ Ball.prototype.update = function (p1, pc) {
         } else if (ball.x > width) {
             p1Score++;
         }
+
         this.velx = 10;
         this.vely = 0;
         this.x = width / 2;
