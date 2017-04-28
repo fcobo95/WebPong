@@ -597,11 +597,7 @@ Ball.prototype.update = function (p1, p2) {
         }
 
         if (this.x < 0 || this.x > width) { // a point was scored
-            if (ball.x < 0) {
-                p2Score++;
-            } else if (ball.x > width) {
-                p1Score++;
-            }
+
             socket.emit('ballmove', {
                 'velx': 10,
                 'vely': 0,
