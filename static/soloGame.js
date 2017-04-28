@@ -2,12 +2,30 @@
  * Created by Erick Fernando Cobo on 4/11/2017.
  */
 /* ********************* CANVAS SETUP BEGINS ********************* */
+/* ****************************************************************************************
+ *
+ * SOLOGAME
+ *
+ * EN ESTE JS BASICAMENTE LO QUE SE HACE ES AGREGAR LA LOGICA DEL JUEGO, EL MANEJO DE EVENTOS
+ * EN EL CASO DE QUE EL USUARIO PRESIONE UNA TECLA CUANDO ESTE DENTRO DE UN JUEGO.
+ * A CONTINUACION SE VA A IR COMENTANDO CADA LINEA, PARA IR EXPLICANNDO MAS A FONDO COMO FUNCIONA
+ * EL JUEGO Y ESTE SCRIPT EN GENERAL.
+ *
+ * *************************************************************************************** */
 var animate = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     function (callback) {
         window.setTimeout(callback, 1000 / 60)
     };
+
+/* ****************************************************************************************
+ *
+ * A NIVEL GLOBAL CREAMOS ESTAS VARIABLES, PARA PODER SETTEAR LA CANTIDAD DE SETS QUE HA
+ * GANADO EL JUGADOR O LA COMPUTADORA, ADEMAS DE LA CANTIDAD DE SETS QUE SE TIENEN QUE GANAR
+ * PARA PODER SER VICTORIOSO EN EL CAMPOS DE BATALLA!!!!!!!!!
+ *
+ * *************************************************************************************** */
 var setAmount = 2;
 var setAmountP1 = 0;
 var setAmountPC = 0;
@@ -18,25 +36,56 @@ canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
 
+
+/* ****************************************************************************************
+ *
+ * OBTIENE EL CONTENEDOR QUE VA A ALBERGAR EL JUEGO.
+ *
+ * *************************************************************************************** */
 window.onload = function () {
     document.getElementById('game-container').appendChild(canvas);
     animate(step);
 };
 
+
+/* ****************************************************************************************
+ *
+ * ESCUCHA EVENTOS DEL JUGADOR, CUANDO PRESIONA UNA TECLA PARA EL EVENTO "RELEASE" DE LA TECLA.
+ *
+ * *************************************************************************************** */
 window.addEventListener("keyup", function (event) {
     delete keysDown[event.keyCode];
 });
 
+
+/* ****************************************************************************************
+ *
+ * ESCUCHA EVENTOS DEL JUGADOR, CUANDO PRESIONA UNA TECLA PARA EL EVENTO "PRESS" DE LA TECLA.
+ *
+ * *************************************************************************************** */
 window.addEventListener("keydown", function (event) {
     keysDown[event.keyCode] = true;
 });
 
+
+/* ****************************************************************************************
+ *
+ * SIRVE PARA INICIAR EL CANVAS.
+ *
+ * *************************************************************************************** */
 var step = function () { // variable STEP
     update();
     render();
     animate(step);
 };
 
+
+/* ****************************************************************************************
+ *
+ * SE CREAN LAS INSTANCIAS DE LOS JUGADORES, DE LAS PALETAS, LA BOLA, LA LINEA DEL MEDIO DEL
+ * CAMPO DE JUEGO, LOS DOS MARCADORES.
+ *
+ * *************************************************************************************** */
 var keysDown = [];
 var player = new Player(); // Nuevo jugador
 var computer = new Computer(); // Nueva IA
@@ -45,6 +94,13 @@ var score1 = new GameScoreP1(50, 50);
 var score2 = new GameScorePC((width / 2) + 50, 50);
 var ball = new Ball(width / 2, height / 2);
 
+
+/* ****************************************************************************************
+ *
+ * SE ENCARGA DE RENDERIZAR TODAS LAS INSTANCIAS DE LOS DISTINTOS OBJETOS DENTRO DEL CONTEXTO
+ * DEL CANVAS.
+ *
+ * *************************************************************************************** */
 var render = function () { // variable RENDER
     context.fillStyle = "#000000";
     context.fillRect(0, 0, width, height);
@@ -56,6 +112,13 @@ var render = function () { // variable RENDER
     ball.render();
 };
 
+
+/* ****************************************************************************************
+ *
+ * SE ENCARGA DE ESTAR CONSTANTEMENTE ACTUALIZANDO LAS POSICIONES DE LOS OBJETOS DENTRO DEL
+ * CONTEXTO DEL CANVAS.
+ *
+ * *************************************************************************************** */
 var update = function () { // variable UPDATE
     player.update();
     computer.update(ball);
@@ -66,11 +129,23 @@ var update = function () { // variable UPDATE
 
 
 /* ********************* GAMELINE BEGINS *********************** */
+
+/* ****************************************************************************************
+ *
+ * TIPO CONSTRUCTOR DE LA LINEA QUE SE RENDERIZA EN EL MEDIO DE CAMPO DE BATALLA!!!!!
+ *
+ * *************************************************************************************** */
 function GameLine(x, y) {
     this.x = x;
     this.y = y;
 }
 
+
+/* ****************************************************************************************
+ *
+ * SE ENCARGA DE CREAR LA LINEA EN EL MEDIO DEL CAMPO Y UBICARLA DONDE SE LE PIDE QUE ESTE.
+ *
+ * *************************************************************************************** */
 GameLine.prototype.render = function () {
     context.beginPath();
     context.moveTo(width / 2, 0);
@@ -84,22 +159,52 @@ GameLine.prototype.render = function () {
 
 
 /* ********************* GAMESCORE BEGINS ********************** */
+
+/* ****************************************************************************************
+ *
+ * SIRVE PARA CREAR UN MARCADOR PARA EL JUGADOR 1.
+ *
+ * *************************************************************************************** */
 function GameScoreP1(x, y) {
     this.x = x;
     this.y = y;
 }
 
+
+/* ****************************************************************************************
+ *
+ * SIRVE PARA RENDERIZAR EL MARCADOR DEL JUGADOR 1 DENTRO DEL CONTEXTO DEL CANVAS.
+ *
+ * HEREDA POR MEDIO DE PROTOTYPE LA FUNCIONALIDAD DE LA VARIABLE RENDER, PARA PODER MOSTRAR
+ * ESTE OBJETO EN EL CONTEXTO DEL CANVAS.
+ *
+ * *************************************************************************************** */
 GameScoreP1.prototype.render = function () {
     context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 1: " + p1Score, this.x, this.y);
 };
 
+
+/* ****************************************************************************************
+ *
+ * SIRVE PARA CREAR UN MARCADOR PARA LA COMPUTADORA.
+ *
+ * *************************************************************************************** */
 function GameScorePC(x, y) {
     this.x = x;
     this.y = y;
 }
 
+
+/* ****************************************************************************************
+ *
+ * SIRVE PARA RENDERIZAR EL MARCADOR PARA LA COMPUTADORA DENTRO DEL CONTEXTO DEL CANVAS.
+ *
+ * HEREDA POR MEDIO DE PROTOTYPE LA FUNCIONALIDAD DE LA VARIABLE RENDER, PARA PODER MOSTRAR
+ * ESTE OBJETO EN EL CONTEXTO DEL CANVAS.
+ *
+ * *************************************************************************************** */
 GameScorePC.prototype.render = function () {
     context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
@@ -109,7 +214,12 @@ GameScorePC.prototype.render = function () {
 
 
 /* ************************ PADDLES BEGIN ********************** */
-// Esta es como la clase constructura de PADDLE
+//
+/* ****************************************************************************************
+ *
+ * ESTA ES COMO LA CLASE CONSTRUCTURA DE PADDLE
+ *
+ * *************************************************************************************** */
 function Paddle(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -119,15 +229,24 @@ function Paddle(x, y, width, height) {
     this.vely = 0;
 }
 
-// PADDLE hereda, por medio de prototype, las funcionalidades de la variable RENDER
-/* Como PADDLE tiene los mismo parametros que los argumentos de fillRect, entonces
- * podemos llenarlos con los datos del constructor del PADDLE.
- */
+
+/* ****************************************************************************************
+ *
+ * PADDLE HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER
+ * COMO PADDLE TIENE LOS MISMO PARAMETROS QUE LOS ARGUMENTOS DE FILLRECT, ENTONCES
+ * PODEMOS LLENARLOS CON LOS DATOS DEL CONSTRUCTOR DEL PADDLE.
+ *
+ * *************************************************************************************** */
 Paddle.prototype.render = function () {
     context.fillStyle = '#fff';
     context.fillRect(this.x, this.y, this.width, this.height);
 };
 
+/* ****************************************************************************************
+ *
+ * LOGICA PARA PODER MOVER LA PALETA DENTRO DEL CANVAS.
+ *
+ * *************************************************************************************** */
 Paddle.prototype.move = function (x, y) {
     this.x += x;
     this.y += y;
@@ -145,8 +264,13 @@ Paddle.prototype.move = function (x, y) {
 
 
 /* ************************ PLAYER BEGINS ********************** */
-var p1Score = 0;
-// Decimos que PLAYER es una nueva instancia de PADDLE
+var p1Score = 0; // CONTADOR DEL SCORE DEL JUGADOR 1.
+
+/* ****************************************************************************************
+ *
+ * DECIMOS QUE PLAYER ES UNA NUEVA INSTANCIA DE PADDLE
+ *
+ * *************************************************************************************** */
 function Player() {
     // Introducimos los argumentos para pintar el PADDLE que es el PLAYER.
     // Args = (x, y, weigth, height)
@@ -154,10 +278,22 @@ function Player() {
 }
 
 // PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
+
+/* ****************************************************************************************
+ *
+ *
+ *
+ * *************************************************************************************** */
 Player.prototype.render = function () {
     this.paddle.render();
 };
 
+
+/* ****************************************************************************************
+ *
+ *
+ *
+ * *************************************************************************************** */
 Player.prototype.update = function () {
     var movement = 20;
     for (var key in keysDown) {
@@ -175,6 +311,12 @@ Player.prototype.update = function () {
 
 
 /* *********************** COMPUTER BEGINS ********************* */
+
+/* ****************************************************************************************
+ *
+ *
+ *
+ * *************************************************************************************** */
 var pcScore = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Computer() {
@@ -183,11 +325,25 @@ function Computer() {
     this.paddle = new Paddle(width - 40, (height / 2) - 50, 20, 100);
 }
 
-// PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
+
+/* ****************************************************************************************
+ *
+ * PLAYER HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER.
+ *
+ * *************************************************************************************** */
 Computer.prototype.render = function () {
     this.paddle.render();
 };
 
+/* ****************************************************************************************
+ *
+ * SE ENCARGA DE MOVER LA PALETA DE LA COMPUTADORA DENTRO DEL CANVAS, SE ENFOCA EN PERSEGUIR
+ * EL CENTRO DE LA BOLA, PARA PODER ANOTAR PUNTOS EN CONTRA DEL JUGADOR 1. ESTO BASICAMENTE
+ * ES UN TIPO DE INTELIGENCIA ARTIFICIAL.
+ *
+ * CUENTA CON UNA VELOCIDAD DE MOVIMIENTO, QUE ES "MOVEMENT"
+ *
+ * *************************************************************************************** */
 Computer.prototype.update = function (ball) {
     var movement = 12;
     var ypos = ball.y;
@@ -209,6 +365,18 @@ Computer.prototype.update = function (ball) {
 
 /* ************************* BALL BEGINS *********************** */
 // Decimos que PLAYER es una nueva instancia de PADDLE
+
+/* ****************************************************************************************
+ *
+ * TIPO DE CONSTRUCTOR PARA LA BOLA.
+ *
+ * RECIBE X Y Y
+ *
+ * X PARA LLEVAR UN RECORD DE SU POSICION EN X
+ *
+ * Y PARA LLEVAR UN RECORD DE SU POSICION EN Y
+ *
+ * *************************************************************************************** */
 function Ball(x, y) {
     this.x = x;
     this.y = y;
@@ -217,7 +385,11 @@ function Ball(x, y) {
     this.radius = 10;
 }
 
-// PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
+/* ****************************************************************************************
+ *
+ * BALL HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER.
+ *
+ * *************************************************************************************** */
 Ball.prototype.render = function () {
     context.beginPath(); // Para empezar a dibujar el circulo
     context.arc(this.x, this.y, this.radius, Math.PI * 2, 0); // arc necesita un x, y, r, angula_inicial, angulo_final
@@ -225,6 +397,15 @@ Ball.prototype.render = function () {
     context.fill(); // se rellena la BALL para que sea visible en el canvas.
 };
 
+
+/* ****************************************************************************************
+ *
+ * EN ESTE METODO BASICAMENTE DE UTILIZA LA FUNCIONALIDAD DE LA VARIABLE UPDATE, PARA PODER
+ * ACTUALIZAR LA POSICION DE LA BOLA EN EL CANVAS. TAMBIEN, ESTE METODO SE ENCARGA DE ADMINISTRAR
+ * LA DETECCION DE COLISIONES CON LAS PAREDES DEL CANVAS PARA ASI DECIRLE A LA BOLA QUE DIRECCION
+ * DEBE DE TOMAR SI PEGA EN X O Y PARTE DE LA PALETA DEL JUGADOR 1 O DE LA COMPUTADORA.
+ *
+ * *************************************************************************************** */
 Ball.prototype.update = function (p1, pc) {
     // Ball speed
     this.x += this.velx;
