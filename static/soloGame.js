@@ -277,23 +277,15 @@ function Player() {
     this.paddle = new Paddle(width - (width - 20), (height / 2) - 50, 20, 100);
 }
 
-// PLAYER hereda, por medio de prototype, las funcionalidades de la variable RENDER.
-
 /* ****************************************************************************************
  *
- *
+ * PLAYER HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER.
  *
  * *************************************************************************************** */
 Player.prototype.render = function () {
     this.paddle.render();
 };
 
-
-/* ****************************************************************************************
- *
- *
- *
- * *************************************************************************************** */
 Player.prototype.update = function () {
     var movement = 20;
     for (var key in keysDown) {
@@ -312,11 +304,6 @@ Player.prototype.update = function () {
 
 /* *********************** COMPUTER BEGINS ********************* */
 
-/* ****************************************************************************************
- *
- *
- *
- * *************************************************************************************** */
 var pcScore = 0;
 // Decimos que PLAYER es una nueva instancia de PADDLE
 function Computer() {
@@ -328,7 +315,7 @@ function Computer() {
 
 /* ****************************************************************************************
  *
- * PLAYER HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER.
+ * COMPUTER HEREDA, POR MEDIO DE PROTOTYPE, LAS FUNCIONALIDADES DE LA VARIABLE RENDER.
  *
  * *************************************************************************************** */
 Computer.prototype.render = function () {
