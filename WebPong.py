@@ -34,7 +34,11 @@ with app.app_context():
 @auth.verify_password
 def verifiqueContrasena(usuario_o_token, password):
     try:
-        elUsuario = verifiqueToken(usuario_o_token)
+        laAutorizacion = request.cookies.get('authorization')
+        if usuario_o_token == "" and laAutorizacion is None:
+            return False
+        elToken = laAutorizacion[6:]
+        elUsuario = verifiqueToken(elToken)
         if elUsuario is None:
             elUsuario = localDatabase.Usuarios.find_one({'Usuario': usuario_o_token})
             if elUsuario is not None:
@@ -431,6 +435,7 @@ def verifiqueToken(token):
     except BadSignature:
         return None
     elUsuario = losDatos['Usuario']
+    print(elUsuario)
     return elUsuario
 
 

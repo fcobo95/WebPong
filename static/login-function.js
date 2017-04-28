@@ -27,7 +27,7 @@ function login_function() {
             success: function (response) {
                 console.log(response);
                 alert("Welcome, " + username + "!");
-                sessionStorage.setItem("Token", response['Token']);
+                document.cookie = "authorization=Basic " + response['Token'];
                 window.location.href = "/index";
             },
             error: function (response) {
