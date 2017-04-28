@@ -180,9 +180,9 @@ def savePlayer():
         print("New player saved.")
     else:
         elAntiguoPuntaje = int(laBusqueda['Puntaje'])
-        if elPuntaje > elAntiguoPuntaje:
-            localDatabase.Ranking.update({'_id': elJugador}, {'$set': {'Puntaje': elPuntaje}})
-            print("Player updated.")
+        elNuevoPuntaje = elAntiguoPuntaje + elPuntaje
+        localDatabase.Ranking.update({'_id': elJugador}, {'$set': {'Puntaje': elNuevoPuntaje}})
+        print("Player updated.")
     laAccion = "Se guarda puntaje de: " + elJugador
     ingreseElLog(laAccion)
     return "True"
