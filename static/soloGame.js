@@ -26,9 +26,7 @@ var animate = window.requestAnimationFrame ||
  * PARA PODER SER VICTORIOSO EN EL CAMPOS DE BATALLA!!!!!!!!!
  *
  * *************************************************************************************** */
-var setAmount = 2;
-var setAmountP1 = 0;
-var setAmountPC = 0;
+
 var canvas = document.createElement('canvas');
 var width = window.innerWidth - 150;
 var height = window.innerHeight - 150;
@@ -87,6 +85,9 @@ var step = function () { // variable STEP
  *
  * *************************************************************************************** */
 var keysDown = [];
+var setAmount = 2;
+var setAmountP1 = 0;
+var setAmountPC = 0;
 var player = new Player(); // Nuevo jugador
 var computer = new Computer(); // Nueva IA
 var line = new GameLine(0, width / 2, 15, height);

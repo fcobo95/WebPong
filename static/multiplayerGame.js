@@ -219,6 +219,9 @@ var step = function () { // variable STEP
  * Y SE INICIALIZAN LOS MARCADORES DE LOS DOS JUGADORES EN 0.
  *
  * *************************************************************************************** */
+var setAmount = 2;
+var setAmountP1 = 0;
+var setAmountPC = 0;
 var player1 = new Player1(); // Nuevo jugador
 var player2 = new Player2(); // Nueva IA
 var line = new GameLine(0, width / 2, 3, height);
@@ -652,14 +655,31 @@ socket.on('ballmove', function (text) {
     }
 
     if (ball.x < 0 || ball.x > width) {
-        // a point was scored
-        // if (ball.x < 0){
-        //     p2Score++;
-        //     score2.render(p2Score);
-        // } else if (ball.x > width){
-        //     p1Score++;
-        //     score1.render(p1Score);
-        // }
+        if (p1Score > 9) {
+            setAmountP1 += 1;
+            p1Score = 0;
+            p2Score = 0;
+            if (setAmountP1 >= setAmount) {
+                alert("Player won!!!");
+                setAmountP1 = 0;
+            }
+        }
+        else if (p2Score > 9) {
+            setAmountPC += 1;
+            p1Score = 0;
+            p2Score = 0;
+            if (setAmountPC >= setAmount) {
+                alert("Computer won!");
+                setAmountPC = 0;
+            }
+        }
+        else {
+            if (ball.x < 0) {
+                p2Score++;
+            } else if (ball.x > width) {
+                p1Score++;
+            }
+        }
         ball.velx = elTextoComoJSON['velx'];
         ball.vely = elTextoComoJSON['vely'];
         ball.x = elTextoComoJSON['x'];
@@ -680,7 +700,7 @@ socket.on('ballmove', function (text) {
             ball.vely = elTextoComoJSON['vely'];
             ball.velx = elTextoComoJSON['velx'];
             ball.y = elTextoComoJSON['y'];
-            ball.x = elTextoComoJSON['x']
+            ball.x = elTextoComoJSON['x'];
         }
     }
 });
