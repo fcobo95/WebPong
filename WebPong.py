@@ -9,14 +9,14 @@ import datetime
 import base64
 
 # SE CREA LA APLICACION DE FLASK, SE DEFINE LA LLAVE SECRETA PARA LA CREACION DE TOKENS,
-# SE INICIALIZA LA AUTENTICACION BASICA.
+# SE INICIALIZA LA AUTENTICACION BASICA, Y EL USO DE SOCKETS.
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'JE9395ccce'
 auth = HTTPBasicAuth()
 socketio = SocketIO(app)
 
 # ESTA FUNCION CORRE UNA VEZ AL INICIAR EL SERVIDOR, EN DONDE CREA LA CONEXION CON LA BASE
-# DE DATOS LOCAL.
+# DE DATOS LOCAL, ASI COMO LAS LISTAS PARA LAS COLAS Y LAS SALAS DE JUEGO DISPONIBLES.
 with app.app_context():
     clienteLocal = MongoClient('localhost', 27017)
     localDatabase = clienteLocal.MongoLocal
@@ -56,18 +56,24 @@ def verifiqueContrasena(usuario_o_token, password):
 # ESTA RUTA HACE UN REDIRECCIONAMIENTO A LA PAGINA DE LOGIN
 @app.route('/')
 def redirection():
+    laAccion = "Redireccion a login."
+    ingreseElLog(laAccion)
     return redirect('/login', 302)
 
 
 # ESTA RUTA MUESTRA LA PAGINA DE LOGIN
 @app.route('/login')
 def login():
+    laAccion = "Ingreso al login."
+    ingreseElLog(laAccion)
     return render_template('Login.html')
 
 
 # ESTA RUTA MUESTRA LA PAGINA DE SIGNUP
 @app.route('/signup')
 def signup():
+    laAccion = "Ingreso a signup."
+    ingreseElLog(laAccion)
     return render_template('Signup.html')
 
 
@@ -76,6 +82,8 @@ def signup():
 @app.route('/index')
 @auth.login_required
 def index():
+    laAccion = "Ingreso al index."
+    ingreseElLog(laAccion)
     return render_template('Index.html')
 
 
@@ -83,6 +91,8 @@ def index():
 @app.route('/solo')
 @auth.login_required
 def soloGame():
+    laAccion = "Ingreso a partida solo."
+    ingreseElLog(laAccion)
     return render_template('Soloplayer.html')
 
 
@@ -90,6 +100,8 @@ def soloGame():
 @app.route('/multiplayer')
 @auth.login_required
 def multiplayerGame():
+    laAccion = "Ingreso a pagina multiplayer."
+    ingreseElLog(laAccion)
     return render_template('Multiplayer.html')
 
 
@@ -171,6 +183,8 @@ def savePlayer():
         if elPuntaje > elAntiguoPuntaje:
             localDatabase.Ranking.update({'_id': elJugador}, {'$set': {'Puntaje': elPuntaje}})
             print("Player updated.")
+    laAccion = "Se guarda puntaje de: " + elJugador
+    ingreseElLog(laAccion)
     return "True"
 
 
@@ -190,6 +204,8 @@ def showRanking():
 # ESTA FUNCION IMPRIME CADA JUGADOR QUE SE CONECTA AL SOCKET.
 @socketio.on('connect')
 def connected():
+    laAccion = "Conexion al socket."
+    ingreseElLog(laAccion)
     print('Connected: ' + request.sid)
 
 
@@ -203,6 +219,8 @@ def on_join_23():
     if len(laColaModo23) < 2:
         laColaModo23.append([elSocketID, elUsuario])
         localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '2/3'})
+        laAccion = "Ingresa a cola de juego 2/3"
+        ingreseElLog(laAccion)
     if len(laColaModo23) == 2:
         elSID1 = laColaModo23[0][0]
         elSID2 = laColaModo23[1][0]
@@ -223,6 +241,8 @@ def on_join_23():
                 socketio.emit('message', laColaModo23[1][1] + 'has joined the game.', room=cadaSala)
                 break
         laColaModo23.clear()
+        laAccion = "Empieza juego 2/3"
+        ingreseElLog(laAccion)
 
 
 # ESTA FUNCION RECIBE LA IDENTIFICACION DE SOCKET DE CADA JUGADOR, Y LO INGRESA A LA
@@ -235,6 +255,8 @@ def on_join_35():
     if len(laColaModo35) < 2:
         laColaModo35.append([elSocketID, elUsuario])
         localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '3/5'})
+        laAccion = "Ingresa a cola de juego 3/5"
+        ingreseElLog(laAccion)
     if len(laColaModo35) == 2:
         elSID1 = laColaModo35[0][0]
         elSID2 = laColaModo35[1][0]
@@ -255,6 +277,8 @@ def on_join_35():
                 socketio.emit('message', laColaModo35[1][1] + 'has joined the game.', room=cadaSala)
                 break
         laColaModo35.clear()
+        laAccion = "Empieza juego 3/5"
+        ingreseElLog(laAccion)
 
 
 # ESTA FUNCION RECIBE LA IDENTIFICACION DE SOCKET DE CADA JUGADOR, Y LO INGRESA A LA
@@ -267,6 +291,8 @@ def on_join_47():
     if len(laColaModo47) < 2:
         laColaModo47.append([elSocketID, elUsuario])
         localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '4/7'})
+        laAccion = "Ingresa a cola de juego 4/7"
+        ingreseElLog(laAccion)
     if len(laColaModo47) == 2:
         elSID1 = laColaModo47[0][0]
         elSID2 = laColaModo47[1][0]
@@ -287,6 +313,8 @@ def on_join_47():
                 socketio.emit('message', laColaModo47[1][1] + 'has joined the game.', room=cadaSala)
                 break
         laColaModo47.clear()
+        laAccion = "Empieza juego 4/7"
+        ingreseElLog(laAccion)
 
 
 # ESTE METODO SE UTILIZA PARA EL CHAT DENTRO DE LA SALA DE JUEGO. EL SOCKET RECIBE
@@ -298,6 +326,8 @@ def handle_message(message):
     laSala = message['room']
     print('Mensaje: ' + elMensaje + " Sala: " + laSala)
     socketio.emit('message', elMensaje, room=laSala)
+    laAccion = "Envia mensaje en chat."
+    ingreseElLog(laAccion)
 
 
 # ESTA FUNCION RECIBE LA INFORMACION DE LAS TECLAS PRESIONADAS POR EL JUGADOR
@@ -330,6 +360,8 @@ def on_leave(data):
     leave_room(laSala)
     print(elUsuario + " has left the room.")
     socketio.send(elUsuario + ' has left the room.', room=laSala)
+    laAccion = "Sale de la partida."
+    ingreseElLog(laAccion)
 
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
