@@ -156,7 +156,7 @@ function GameScoreP1(x, y) {
 }
 
 GameScoreP1.prototype.render = function (p1Score) {
-    context.font = "50px Monospace";
+    context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 1: " + p1Score, this.x, this.y);
 };
@@ -167,7 +167,7 @@ function GameScoreP2(x, y) {
 }
 
 GameScoreP2.prototype.render = function (p2Score) {
-    context.font = "50px Monospace";
+    context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 2: " + p2Score, this.x, this.y);
 };

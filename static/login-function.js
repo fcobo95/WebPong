@@ -17,7 +17,7 @@ function login_function() {
     if (username === "" || password === "") {
         alert("Error: Ingrese su usuario y contraseña.")
     } else {
-        $.ajax({
+        var settings = {
             "async": true,
             "url": "/api/login",
             "method": "GET",
@@ -34,6 +34,10 @@ function login_function() {
                 console.log(response);
                 alert("Error: " + response['statusText'])
             }
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
         });
     }
 }

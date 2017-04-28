@@ -8,7 +8,9 @@ var animate = window.requestAnimationFrame ||
     function (callback) {
         window.setTimeout(callback, 1000 / 60)
     };
-
+var setAmount = 2;
+var setAmountP1 = 0;
+var setAmountPC = 0;
 var canvas = document.createElement('canvas');
 var width = window.innerWidth - 150;
 var height = window.innerHeight - 150;
@@ -39,8 +41,8 @@ var keysDown = [];
 var player = new Player(); // Nuevo jugador
 var computer = new Computer(); // Nueva IA
 var line = new GameLine(0, width / 2, 15, height);
-var score1 = new GameScoreP1(width / 2 - 600, 50);
-var score2 = new GameScorePC(width - 600, 50);
+var score1 = new GameScoreP1(50, 50);
+var score2 = new GameScorePC((width / 2) + 50, 50);
 var ball = new Ball(width / 2, height / 2);
 
 var render = function () { // variable RENDER
@@ -64,11 +66,9 @@ var update = function () { // variable UPDATE
 
 
 /* ********************* GAMELINE BEGINS *********************** */
-function GameLine(x, y, width, height) {
+function GameLine(x, y) {
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
 }
 
 GameLine.prototype.render = function () {
@@ -90,7 +90,7 @@ function GameScoreP1(x, y) {
 }
 
 GameScoreP1.prototype.render = function () {
-    context.font = "50px Monospace";
+    context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Player 1: " + p1Score, this.x, this.y);
 };
@@ -101,7 +101,7 @@ function GameScorePC(x, y) {
 }
 
 GameScorePC.prototype.render = function () {
-    context.font = "50px Monospace";
+    context.font = "35px Monospace";
     context.fillStyle = "#FFFFFF";
     context.fillText("Computer: " + pcScore, this.x, this.y);
 };
@@ -159,12 +159,13 @@ Player.prototype.render = function () {
 };
 
 Player.prototype.update = function () {
+    var movement = 20;
     for (var key in keysDown) {
         var value = Number(key);
         if (value === 87) { // left arrow
-            this.paddle.move(0, -15);
+            this.paddle.move(0, -movement);
         } else if (value === 83) { // right arrow
-            this.paddle.move(0, 15);
+            this.paddle.move(0, movement);
         } else {
             this.paddle.move(0, 0);
         }
@@ -188,7 +189,7 @@ Computer.prototype.render = function () {
 };
 
 Computer.prototype.update = function (ball) {
-    var movement = 20;
+    var movement = 12;
     var ypos = ball.y;
     var advance = -((this.paddle.y + (this.paddle.height / 2)) - ypos);
     if (advance < 0 && advance < -movement) {
@@ -242,17 +243,37 @@ Ball.prototype.update = function (p1, pc) {
     }
 
     if (this.x < 0 || this.x > width) { // a point was scored
-        if (this.x < 0) {
-            pcScore++;
-        } else if (ball.x > width) {
-            p1Score++;
+        if (p1Score > 9) {
+            setAmountP1 += 1;
+            p1Score = 0;
+            pcScore = 0;
+            if (setAmountP1 >= setAmount) {
+                alert("Player won!!!");
+                setAmountP1 = 0;
+            }
         }
-
+        else if (pcScore > 9) {
+            setAmountPC += 1;
+            p1Score = 0;
+            pcScore = 0;
+            if (setAmountPC >= setAmount) {
+                alert("Computer won!");
+                setAmountPC = 0;
+            }
+        }
+        else {
+            if (this.x < 0) {
+                pcScore++;
+            } else if (ball.x > width) {
+                p1Score++;
+            }
+        }
         this.velx = 10;
         this.vely = 0;
         this.x = width / 2;
         this.y = height / 2;
     }
+
 
     if (bottom_x < width / 2) {
         if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
@@ -268,6 +289,7 @@ Ball.prototype.update = function (p1, pc) {
             this.velx = -10;
             this.y += this.vely;
         }
+
     }
 };
 /* ************************** BALL ENDS ************************ */
