@@ -407,7 +407,6 @@ Ball.prototype.render = function () {
  *
  * *************************************************************************************** */
 Ball.prototype.update = function (p1, pc) {
-    // Ball speed
     this.x += this.velx;
     this.y += this.vely;
     var top_x = this.x - 10;
@@ -423,7 +422,7 @@ Ball.prototype.update = function (p1, pc) {
         this.vely = -this.vely;
     }
 
-    if (this.x < 0 || this.x > width) { // a point was scored
+    if (this.x < 0 || this.x > width) {
         if (p1Score > 9) {
             setAmountP1 += 1;
             p1Score = 0;
@@ -458,14 +457,12 @@ Ball.prototype.update = function (p1, pc) {
 
     if (bottom_x < width / 2) {
         if (top_y < (p1.y + p1.height) && bottom_y > p1.y && top_x < (p1.x + p1.width) && bottom_x > p1.x) {
-            // hit the player1's paddle
             this.vely += (p1.vely / 2);
             this.velx = 10;
             this.y += this.vely;
         }
     } else {
         if (top_y < (pc.y + pc.height) && bottom_y > pc.y && top_x < (pc.x + pc.width) && bottom_x > pc.x) {
-            // hit the player2's paddle
             this.vely += (pc.vely / 2);
             this.velx = -10;
             this.y += this.vely;
