@@ -347,6 +347,16 @@ def keypress(keypress):
     socketio.emit('keypress', elMovimientoComoJSON, room=laSala)
 
 
+# ESTA FUNCION RECIBE LAS COORDENADAS DE LA BOLA Y LAS ENVIA A LOS JUGADORES
+# PARA SINCRONIZAR EL MOVIMIENTO DE LA MISMA.
+@socketio.on('ballmove')
+def ball_movement(ball):
+    print(ball)
+    laSala = ball['room']
+    laBola = json.dumps(ball)
+    socketio.emit('ballmove', laBola, room=laSala)
+
+
 # ESTA FUNCION SACA A AMBOS JUGADORES DE LA SALA DE JUEGO, TANTO EL QUE
 # QUISO SALIR, COMO EL QUE SEGUIA JUGANDO.
 @socketio.on('leave')
