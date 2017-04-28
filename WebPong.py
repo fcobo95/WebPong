@@ -56,18 +56,18 @@ def redirection():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    return render_template('Login.html')
 
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html')
+    return render_template('Signup.html')
 
 
 @app.route('/index')
 @auth.login_required
 def index():
-    return render_template('index.html')
+    return render_template('Index.html')
 
 
 @app.route('/solo')
