@@ -198,6 +198,7 @@ def on_join_23():
     elUsuario = definaElUsuario()
     if len(laColaModo23) < 2:
         laColaModo23.append([elSocketID, elUsuario])
+        localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '2/3'})
     if len(laColaModo23) == 2:
         elSID1 = laColaModo23[0][0]
         elSID2 = laColaModo23[1][0]
@@ -207,9 +208,11 @@ def on_join_23():
                 localDatabase.Salas.insert_one(
                     {'_id': cadaSala, 'Usuario1': laColaModo23[0][1], 'Usuario2': laColaModo23[1][1]})
                 join_room(cadaSala, elSID1)
+                localDatabase.Colas.remove({'_id':elSID1})
                 laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
                 socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
+                localDatabase.Colas.remove({'_id': elSID2})
                 laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
                 socketio.emit('join', laRespuesta2, skip_sid=elSID1)
                 socketio.emit('message', laColaModo23[0][1] + 'has joined the game.', room=cadaSala)
@@ -224,6 +227,7 @@ def on_join_35():
     elUsuario = definaElUsuario()
     if len(laColaModo35) < 2:
         laColaModo35.append([elSocketID, elUsuario])
+        localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '3/5'})
     if len(laColaModo35) == 2:
         elSID1 = laColaModo35[0][0]
         elSID2 = laColaModo35[1][0]
@@ -233,9 +237,11 @@ def on_join_35():
                 localDatabase.Salas.insert_one(
                     {'_id': cadaSala, 'Usuario1': laColaModo35[0][1], 'Usuario2': laColaModo35[1][1]})
                 join_room(cadaSala, elSID1)
+                localDatabase.Colas.remove({'_id': elSID1})
                 laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
                 socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
+                localDatabase.Colas.remove({'_id': elSID2})
                 laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
                 socketio.emit('join', laRespuesta2, skip_sid=elSID1)
                 socketio.emit('message', laColaModo35[0][1] + 'has joined the game.', room=cadaSala)
@@ -250,6 +256,7 @@ def on_join_47():
     elUsuario = definaElUsuario()
     if len(laColaModo47) < 2:
         laColaModo47.append([elSocketID, elUsuario])
+        localDatabase.Colas.insert_one({'_id': elSocketID, 'Usuario': elUsuario, 'GameMode': '4/7'})
     if len(laColaModo47) == 2:
         elSID1 = laColaModo47[0][0]
         elSID2 = laColaModo47[1][0]
@@ -259,9 +266,11 @@ def on_join_47():
                 localDatabase.Salas.insert_one(
                     {'_id': cadaSala, 'Usuario1': laColaModo47[0][1], 'Usuario2': laColaModo47[1][1]})
                 join_room(cadaSala, elSID1)
+                localDatabase.Colas.remove({'_id': elSID1})
                 laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
                 socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
+                localDatabase.Colas.remove({'_id': elSID2})
                 laRespuesta2 = json.dumps({'player': '2', 'room': cadaSala})
                 socketio.emit('join', laRespuesta2, skip_sid=elSID1)
                 socketio.emit('message', laColaModo47[0][1] + 'has joined the game.', room=cadaSala)
