@@ -53,33 +53,40 @@ def verifiqueContrasena(usuario_o_token, password):
         return formateeElError(e)
 
 
+# ESTA RUTA HACE UN REDIRECCIONAMIENTO A LA PAGINA DE LOGIN
 @app.route('/')
 def redirection():
     return redirect('/login', 302)
 
 
+# ESTA RUTA MUESTRA LA PAGINA DE LOGIN
 @app.route('/login')
 def login():
     return render_template('Login.html')
 
 
+# ESTA RUTA MUESTRA LA PAGINA DE SIGNUP
 @app.route('/signup')
 def signup():
     return render_template('Signup.html')
 
 
+# ESTA RUTA MUESTRA EL INDEX, DONDE SE PUEDE ELEGIR UN JUEGO
+# SOLO O MULTIPLAYER.
 @app.route('/index')
 @auth.login_required
 def index():
     return render_template('Index.html')
 
 
+# ESTA RUTA MUESTRA LA PAGINA PARA EL JUEGO SOLO
 @app.route('/solo')
 @auth.login_required
 def soloGame():
     return render_template('Soloplayer.html')
 
 
+# ESTA RUTA MUESTRA LA PAGINA PARA EL JUEGO MULTIPLAYER
 @app.route('/multiplayer')
 @auth.login_required
 def multiplayerGame():
@@ -147,21 +154,9 @@ def obtengaToken():
         return formateeElError(e)
 
 
-# TODO: BORRAR ESTE METODO O VER SI SE USA EN ALGUN LADO
-@app.route('/api/check-room', methods=['POST'])
-def checkRoom():
-    laInformacion = request.json
-    laSala = laInformacion['room']
-    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
-    if laBusqueda is None:
-        return 'True'
-    else:
-        if laBusqueda['Usuario2'] == '':
-            return 'True'
-        else:
-            return 'False'
-
-
+# ESTA FUNCION RECIBE UN JSON E INGRESA EL NOMBRE Y PUNTAJE DE CADA JUGADOR
+# LA BASE DE DATOS PARA LUEGO CREAR EL RANKING. SI EL JUGADOR ES NUEVO LO
+# INGRESA DE UNA, SI NO ES NUEVO REVISA SI EL PUNTAJE ES MAYOR AL QUE TENIA.
 @app.route('/api/save-player', methods=['POST'])
 def savePlayer():
     laInformacion = request.json
@@ -179,6 +174,7 @@ def savePlayer():
     return "True"
 
 
+# ESTA FUNCION OBTIENE LOS DIEZ MEJORES JUGADORES SEGUN SU PUNTAJE, Y LO ENVIA EN UN JSON.
 @app.route('/api/show-ranking', methods=['GET'])
 def showRanking():
     elTop10 = localDatabase.Ranking.find().sort('Puntaje', -1).limit(10)
@@ -191,11 +187,15 @@ def showRanking():
     return Response(laRespuestaComoJSON, 200, mimetype='application/json')
 
 
+# ESTA FUNCION IMPRIME CADA JUGADOR QUE SE CONECTA AL SOCKET.
 @socketio.on('connect')
 def connected():
     print('Connected: ' + request.sid)
 
 
+# ESTA FUNCION RECIBE LA IDENTIFICACION DE SOCKET DE CADA JUGADOR, Y LO INGRESA A LA
+# COLA DEL JUEGO 2/3. CUANDO EN LA COLA HAY DOS JUGADORES, LOS INGRESA A LA MISMA SALA
+# PARA QUE PUEDAN JUGAR, Y LOS ELIMINA DE LA COLA.
 @socketio.on('join-2/3')
 def on_join_23():
     elSocketID = request.sid
@@ -212,7 +212,7 @@ def on_join_23():
                 localDatabase.Salas.insert_one(
                     {'_id': cadaSala, 'Usuario1': laColaModo23[0][1], 'Usuario2': laColaModo23[1][1]})
                 join_room(cadaSala, elSID1)
-                localDatabase.Colas.remove({'_id':elSID1})
+                localDatabase.Colas.remove({'_id': elSID1})
                 laRespuesta1 = json.dumps({'player': '1', 'room': cadaSala})
                 socketio.emit('join', laRespuesta1, skip_sid=elSID2)
                 join_room(cadaSala, elSID2)
@@ -225,6 +225,9 @@ def on_join_23():
         laColaModo23.clear()
 
 
+# ESTA FUNCION RECIBE LA IDENTIFICACION DE SOCKET DE CADA JUGADOR, Y LO INGRESA A LA
+# COLA DEL JUEGO 3/5. CUANDO EN LA COLA HAY DOS JUGADORES, LOS INGRESA A LA MISMA SALA
+# PARA QUE PUEDAN JUGAR, Y LOS ELIMINA DE LA COLA.
 @socketio.on('join-3/5')
 def on_join_35():
     elSocketID = request.sid
@@ -254,6 +257,9 @@ def on_join_35():
         laColaModo35.clear()
 
 
+# ESTA FUNCION RECIBE LA IDENTIFICACION DE SOCKET DE CADA JUGADOR, Y LO INGRESA A LA
+# COLA DEL JUEGO 4/7. CUANDO EN LA COLA HAY DOS JUGADORES, LOS INGRESA A LA MISMA SALA
+# PARA QUE PUEDAN JUGAR, Y LOS ELIMINA DE LA COLA.
 @socketio.on('join-4/7')
 def on_join_47():
     elSocketID = request.sid
@@ -283,30 +289,9 @@ def on_join_47():
         laColaModo47.clear()
 
 
-# TODO: BORRAR ESTE METODO
-@socketio.on('join2')
-def on_join(message):
-    elUsuario = definaElUsuario()
-    laSala = message['room']
-    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
-    if laBusqueda is None:
-        localDatabase.Salas.insert_one({'_id': laSala, 'Usuario1': elUsuario, 'Usuario2': ''})
-        join_room(laSala)
-        print(elUsuario + " joined.")
-        socketio.emit('join', '1')
-        socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
-    else:
-        if laBusqueda['Usuario2'] == '':
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': elUsuario}})
-            join_room(laSala)
-            print(elUsuario + " joined.")
-            socketio.emit('join', '2')
-            socketio.emit('message', elUsuario + ' has joined the room.', room=laSala)
-        else:
-            print("Room full.")
-            socketio.emit('join', 'full')
-
-
+# ESTE METODO SE UTILIZA PARA EL CHAT DENTRO DE LA SALA DE JUEGO. EL SOCKET RECIBE
+# UN MENSAJE POR PARTE DE UN JUGADOR, Y LO ENVIA A TODOS LOS JUGADORES QUE ESTEN
+# EN LA SALA.
 @socketio.on('message')
 def handle_message(message):
     elMensaje = message['message']
@@ -315,6 +300,9 @@ def handle_message(message):
     socketio.emit('message', elMensaje, room=laSala)
 
 
+# ESTA FUNCION RECIBE LA INFORMACION DE LAS TECLAS PRESIONADAS POR EL JUGADOR
+# Y LAS ENVIA A TODOS LOS JUGADORES DE LA MISMA SALA PARA QUE EL CLIENTE
+# HAGA LAS ACTUALIZACIONES CORRESPONDIENTES.
 @socketio.on('keypress')
 def keypress(keypress):
     laTecla = keypress['key']
@@ -329,6 +317,8 @@ def keypress(keypress):
     socketio.emit('keypress', elMovimientoComoJSON, room=laSala)
 
 
+# ESTA FUNCION SACA A AMBOS JUGADORES DE LA SALA DE JUEGO, TANTO EL QUE
+# QUISO SALIR, COMO EL QUE SEGUIA JUGANDO.
 @socketio.on('leave')
 def on_leave(data):
     elUsuario = definaElUsuario()
@@ -340,36 +330,6 @@ def on_leave(data):
     leave_room(laSala)
     print(elUsuario + " has left the room.")
     socketio.send(elUsuario + ' has left the room.', room=laSala)
-
-
-# TODO: BORRAR ESTE METODO
-@socketio.on('leave2')
-def on_leave(data):
-    elUsuario = definaElUsuario()
-    laSala = data['room']
-    laBusqueda = localDatabase.Salas.find_one({'_id': laSala})
-    if laBusqueda['Usuario1'] == elUsuario:
-        elOtroUsuario = laBusqueda['Usuario2']
-        if elOtroUsuario != "":
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario1': elOtroUsuario}})
-            localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
-            socketio.emit('join', '1')
-        else:
-            localDatabase.Salas.remove({'_id': laSala})
-    elif laBusqueda['Usuario2'] == elUsuario:
-        localDatabase.Salas.update({'_id': laSala}, {'$set': {'Usuario2': ""}})
-    leave_room(laSala)
-    print(elUsuario + " has left the room.")
-    socketio.send(elUsuario + ' has left the room.', room=laSala)
-
-
-# TODO: BORRAR SI NO SE UTILIZA
-@socketio.on('ballmove')
-def ball_movement(ball):
-    print(ball)
-    laSala = ball['room']
-    laBola = json.dumps(ball)
-    socketio.emit('ballmove', laBola, room=laSala)
 
 
 # ESTA FUNCION REVISA EL USUARIO DE LA SESION. SI REALIZA UNA CONEXION DIRECTA CON EL AUTENTICADOR,
